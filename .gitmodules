@@ -1,0 +1,3 @@
+[submodule "CETEIcean"]
+	path = CETEIcean
+	url = https://github.com/TEIC/CETEIcean.git

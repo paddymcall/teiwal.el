@@ -200,8 +200,8 @@ similar stuff."
 			   ))
 			 "\n"
 			 (script
-			  ((src . "http://teic.github.io/CETEIcean/js/CETEI.js"))
-			  "\n// See http://teic.github.io/CETEIcean/js/CETEI.js\n")
+			  ((src . "/js/CETEI.js"))
+			  "\n// See http://teic.github.io/CETEIcean\n")
 			 (title
 			  ()
 			  ,(format "TEIwal for: %s" path)))
@@ -231,9 +231,11 @@ similar stuff."
 	  (ws-response-header proc 200
 			      (cons "Content-type" "application/xml"))
 	  (ws-send proc (buffer-string))))
+       ((file-exists-p (expand-file-name path "/home/beta/webstuff/emacs-things/teiwal/"))
+	(ws-send-file proc (expand-file-name path "/home/beta/webstuff/emacs-things/teiwal/")))
        (t
-	(ws-response-header process 404  '("Content-type" . "text/plain"))
-	(process-send-string process "Ahem, not found?"))))))
+	(ws-response-header proc 404  '("Content-type" . "text/plain"))
+	(process-send-string proc "Ahem, not found?"))))))
 
 
 (defun teiwal/template-send-file (proc path &optional mime-type template-vars)

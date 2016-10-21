@@ -4,11 +4,11 @@
 ;; main idea: take a buffer containing a TEI xml document, and serve
 ;; it as an html document with ceteican.
 
-;; (require 'web-server);; https://github.com/eschulte/emacs-web-server
+(require 'web-server);; https://github.com/eschulte/emacs-web-server
 ;; caused trouble?: curl: (18) transfer closed with 1 bytes remaining to read
 ;; ... on all pages
 
-(require 'simple-httpd);; https://github.com/skeeto/emacs-web-server
+;; (require 'simple-httpd);; https://github.com/skeeto/emacs-web-server
 
 (defun teiwal/html-buffer-name (tei-buffer)
   "Return name of buffer that should contain the html for TEI-BUFFER."
@@ -57,23 +57,23 @@
 ;; from http://teic.github.io/CETEIcean/simpleTest.html:
 
 
-'(html nil
-      (head nil
-	    (meta
-	     ((charset . "utf-8")))
-	    (link
-	     ((rel . "stylesheet")
-	      (href . "css/CETEIcean.css")
-	      (media . "screen")
-	      (charset . "utf-8"))))
-      (body nil "\n    "
-	    (div
-	     ((id . "TEI"))
-	     "\n      Sadly, this page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.\n    ")
-	    "\n    "
-	    (script
-	     ((src . "js/CETEI.js")))
-	    (script nil "\n      var CETEIcean = new CETEI();\n      CETEIcean.getHTML5('testTEI.xml', function(data) {\n        document.getElementById(\"TEI\").innerHTML = \"\";\n        document.getElementById(\"TEI\").appendChild(data);\n        CETEIcean.addStyle(document, data);\n      });\n\n      // Alternatively, use then()\n      // (new CETEI).getHTML5('testTEI.xml').then(function(data){\n      //   document.getElementById(\"TEI\").appendChild(data);\n      // });\n\n    ")))
+;; '(html nil
+;;       (head nil
+;; 	    (meta
+;; 	     ((charset . "utf-8")))
+;; 	    (link
+;; 	     ((rel . "stylesheet")
+;; 	      (href . "css/CETEIcean.css")
+;; 	      (media . "screen")
+;; 	      (charset . "utf-8"))))
+;;       (body nil "\n    "
+;; 	    (div
+;; 	     ((id . "TEI"))
+;; 	     "\n      Sadly, this page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.\n    ")
+;; 	    "\n    "
+;; 	    (script
+;; 	     ((src . "js/CETEI.js")))
+;; 	    (script nil "\n      var CETEIcean = new CETEI();\n      CETEIcean.getHTML5('testTEI.xml', function(data) {\n        document.getElementById(\"TEI\").innerHTML = \"\";\n        document.getElementById(\"TEI\").appendChild(data);\n        CETEIcean.addStyle(document, data);\n      });\n\n      // Alternatively, use then()\n      // (new CETEI).getHTML5('testTEI.xml').then(function(data){\n      //   document.getElementById(\"TEI\").appendChild(data);\n      // });\n\n    ")))
 
 
 ;;; server things
@@ -100,11 +100,7 @@
 (defun teiwal/server-start ()
   "Start a teiwal server."
   (interactive)
-  (let ((httpd-root "~/")
-	(httpd-port teiwal/listen-port)
-	(httpd-host teiwal/listen-address))
-    (message "Starting server %s:%s" httpd-host httpd-port))
-  
+  (message "Starting server %s:%s" teiwal/listen-address teiwal/listen-port)
   (ws-start
    '(((:GET . ".*") . teiwal/serve-buffer))
    teiwal/listen-port
@@ -151,8 +147,6 @@ similar stuff."
                           "</" (symbol-name tag) ">")
                 "/>"))))))
 
-
-
 (defun teiwal/serve-buffer (request)
   (with-slots (process headers) request
     (let ((path (substring (cdr (assoc :GET headers)) 1)))
@@ -186,7 +180,9 @@ similar stuff."
 	  ;; (ws-response-header proc 200
 	  ;; 		      (cons "Content-type" "text/html")
 	  ;; 		      (cons "Content-length" (position-bytes (point-max))))
-	  (ws-send (buffer-string))))
+	  (ws-response-header proc 200
+			      '("Content-type" . "text/html"))
+	  (ws-send proc (buffer-string))))
        ((member path (teiwal/get-nxml-buffers))
 	(with-temp-buffer
 	  (insert "<!DOCTYPE html>\n")
@@ -206,16 +202,6 @@ similar stuff."
 			 (script
 			  ((src . "http://teic.github.io/CETEIcean/js/CETEI.js"))
 			  "\n// See http://teic.github.io/CETEIcean/js/CETEI.js\n")
-			 "\n"
-			 ;; (script ()
-			 ;; 	 ,(concat
-			 ;; 	   "\n      var CETEIcean = new CETEI();\n      CETEIcean.getHTML5('"
-			 ;; 	   (format "buffer/%s" (url-hexify-string path))
-			 ;; 	   "', function(data) {\n        document.getElementById(\"TEI\").innerHTML = \"\";\n        document.getElementById(\"TEI\").appendChild(data);\n        CETEIcean.addStyle(document, data);\n      });\n"
-			 ;; 	   ;; "\n (new CETEI).getHTML5('"
-			 ;; 	   ;; (format "buffer/%s" (url-hexify-string path))
-			 ;; 	   ;; "').then(function(data){\n document.getElementById(\"TEI\").appendChild(data);\n      });\n\n    "
-			 ;; 	   ))
 			 (title
 			  ()
 			  ,(format "TEIwal for: %s" path)))
@@ -224,18 +210,26 @@ similar stuff."
 			  ((id . "TEI"))
 			  "\n      Trying to load file ... (This page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.)\n    ")
 			 "\n    "
+			 (script ()
+			 	 ,(concat
+			 	   "\n      var CETEIcean = new CETEI();\n      CETEIcean.getHTML5('"
+			 	   (format "buffer/%s" (url-hexify-string path))
+			 	   "', function(data) {\n        document.getElementById(\"TEI\").innerHTML = \"\";\n        document.getElementById(\"TEI\").appendChild(data);\n        CETEIcean.addStyle(document, data);\n      });\n"
+			 	   ;; "\n (new CETEI).getHTML5('"
+			 	   ;; (format "buffer/%s" (url-hexify-string path))
+			 	   ;; "').then(function(data){\n document.getElementById(\"TEI\").appendChild(data);\n      });\n\n    "
+			 	   ))
+
 			 ))))
 	  (ws-response-header proc 200
-			       (cons "Content-type" "text/html")
-			       (cons "Content-length" (position-bytes (point-max))))
+			      (cons "Content-type" "text/html"))
 	  (ws-send proc (buffer-string))))
        ((and
 	 (string-match "^buffer/\\(.+\\)$" path)
 	 (member (match-string 1 path) (teiwal/get-nxml-buffers)))
 	(with-current-buffer (get-buffer (match-string 1 path))
 	  (ws-response-header proc 200
-			       (cons "Content-type" "application/xml")
-			       (cons "Content-length" (position-bytes (point-max))))
+			      (cons "Content-type" "application/xml"))
 	  (ws-send proc (buffer-string))))
        (t
 	(ws-response-header process 404  '("Content-type" . "text/plain"))

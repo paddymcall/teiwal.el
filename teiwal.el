@@ -200,7 +200,7 @@ similar stuff."
 			   ))
 			 "\n"
 			 (script
-			  ((src . "/js/CETEI.js"))
+			  ((src . "/CETEIcean/dist/CETEI.js"))
 			  "\n// See http://teic.github.io/CETEIcean\n")
 			 (title
 			  ()
@@ -211,16 +211,13 @@ similar stuff."
 			  "\n      Trying to load file ... (This page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.)\n    ")
 			 "\n    "
 			 (script ()
-			 	 ,(concat
-			 	   "\n      var CETEIcean = new CETEI();\n      CETEIcean.getHTML5('"
-			 	   (format "buffer/%s" (url-hexify-string path))
-			 	   "', function(data) {\n        document.getElementById(\"TEI\").innerHTML = \"\";\n        document.getElementById(\"TEI\").appendChild(data);\n        CETEIcean.addStyle(document, data);\n      });\n"
-			 	   ;; "\n (new CETEI).getHTML5('"
-			 	   ;; (format "buffer/%s" (url-hexify-string path))
-			 	   ;; "').then(function(data){\n document.getElementById(\"TEI\").appendChild(data);\n      });\n\n    "
-			 	   ))
-
-			 ))))
+				 ,(format
+				   (concat
+				    "(new CETEI).getHTML5('buffer/%s').then(function(data){"
+				    "let root = document.getElementById(\"TEI\");"
+				    "while (root.firstChild) {root.removeChild(root.firstChild);};"
+				    "root.appendChild(data);});")
+				   (url-hexify-string path)))))))
 	  (ws-response-header proc 200
 			      (cons "Content-type" "text/html"))
 	  (ws-send proc (buffer-string))))

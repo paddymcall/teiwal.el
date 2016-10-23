@@ -1,0 +1,11 @@
+#+TITLE: Emacs wrapper around CETEIcean
+
+
+* Shadow DOM
+
+- Primer: https://developers.google.com/web/fundamentals/getting-started/primers/shadowdom
+
+** CSS
+
+- Note: Standard css won't apply in a shadow dom!
+- https://developer.mozilla.org/en-US/docs/Web/Web_Components/Shadow_DOM

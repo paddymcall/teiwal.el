@@ -65,9 +65,7 @@ var saritBehaviors =     {
 		shadow.innerHTML = `
 <style>
 
-a.note { background: orange; 
-	 display: inline;
-       }
+sup { display: inline; }
 
 section.note {
     display: none;
@@ -97,7 +95,7 @@ section.note {
 
 </style>
 `;
-		shadow.appendChild(link);
+		shadow.appendChild(document.createElement("sup")).appendChild(link);
 		shadow.appendChild(note);
             };
 	}

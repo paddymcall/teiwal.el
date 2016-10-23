@@ -195,7 +195,7 @@ similar stuff."
 			 "\n"
 			 ;;; add webcomponents first
 			 (script
-			  ((src . "/js/webcomponentsjs-0.7.22/webcomponents.js"))
+			  ((src . "/js/webcomponentsjs-0.7.22/webcomponents.min.js"))
 			  "\n// polyfill stuff: https://github.com/webcomponents/webcomponentsjs \n")
 			 (script
 			  ((src . "/CETEIcean/dist/CETEI.js"))

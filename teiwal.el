@@ -194,18 +194,33 @@ similar stuff."
 			  ((charset . "utf-8")))
 			 (link
 			  ((rel . "stylesheet")
-			   (href . "http://teic.github.io/CETEIcean/css/CETEIcean.css")
+			   (href . "/CETEIcean/test/CETEIcean.css")
+			   (media . "screen")
+			   ;; (charset . "utf-8")
+			   ))
+			 (link
+			  ((rel . "stylesheet")
+			   (href . "/css/sarit.css")
 			   (media . "screen")
 			   ;; (charset . "utf-8")
 			   ))
 			 "\n"
+			 ;;; add webcomponents first
+			 ;; (script
+			 ;;  ((src . "/js/webcomponentsjs-0.7.22/webcomponents.js"))
+			 ;;  "\n// polyfill stuff: https://github.com/webcomponents/webcomponentsjs \n")
 			 (script
 			  ((src . "/CETEIcean/dist/CETEI.js"))
 			  "\n// See http://teic.github.io/CETEIcean\n")
+			 (script
+			  ((src . "/js/sarit.js"))
+			  "\n// SARIT specific extensions \n")			 			 
 			 (title
 			  ()
 			  ,(format "TEIwal for: %s" path)))
 		   (body () "\n    "
+			 (p () "<a class=\"note\" href=\"#note-1t\">[1]</a>")
+			 (section ((id . "note-1t") (class . "note")) "<p>yepp!</p>")
 			 (div
 			  ((id . "TEI"))
 			  "\n      Trying to load file ... (This page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.)\n    ")
@@ -213,10 +228,14 @@ similar stuff."
 			 (script ()
 				 ,(format
 				   (concat
-				    "(new CETEI).getHTML5('buffer/%s').then(function(data){"
-				    "let root = document.getElementById(\"TEI\");"
-				    "while (root.firstChild) {root.removeChild(root.firstChild);};"
-				    "root.appendChild(data);});")
+				    "var c = new CETEI();"
+				    ;; saritBehaviors is defined in sarit.js
+				    "c.addBehaviors(saritBehaviors);"
+				    "c.getHTML5('buffer/%s', function(data){"
+				    "    let root = document.getElementById(\"TEI\");"
+				    "    while (root.firstChild) {root.removeChild(root.firstChild);};"
+				    "    root.appendChild(data);"
+				    "});")
 				   (url-hexify-string path)))))))
 	  (ws-response-header proc 200
 			      (cons "Content-type" "text/html"))

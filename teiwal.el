@@ -192,6 +192,17 @@ similar stuff."
 		   (head ()
 			 (meta
 			  ((charset . "utf-8")))
+			 "\n"
+			 ;;; add webcomponents first
+			 (script
+			  ((src . "/js/webcomponentsjs-0.7.22/webcomponents.js"))
+			  "\n// polyfill stuff: https://github.com/webcomponents/webcomponentsjs \n")
+			 (script
+			  ((src . "/CETEIcean/dist/CETEI.js"))
+			  "\n// See http://teic.github.io/CETEIcean\n")
+			 (script
+			  ((src . "/js/sarit.js"))
+			  "\n// SARIT specific extensions \n")
 			 (link
 			  ((rel . "stylesheet")
 			   (href . "/CETEIcean/test/CETEIcean.css")
@@ -204,23 +215,10 @@ similar stuff."
 			   (media . "screen")
 			   ;; (charset . "utf-8")
 			   ))
-			 "\n"
-			 ;;; add webcomponents first
-			 ;; (script
-			 ;;  ((src . "/js/webcomponentsjs-0.7.22/webcomponents.js"))
-			 ;;  "\n// polyfill stuff: https://github.com/webcomponents/webcomponentsjs \n")
-			 (script
-			  ((src . "/CETEIcean/dist/CETEI.js"))
-			  "\n// See http://teic.github.io/CETEIcean\n")
-			 (script
-			  ((src . "/js/sarit.js"))
-			  "\n// SARIT specific extensions \n")			 			 
 			 (title
 			  ()
 			  ,(format "TEIwal for: %s" path)))
 		   (body () "\n    "
-			 (p () "<a class=\"note\" href=\"#note-1t\">[1]</a>")
-			 (section ((id . "note-1t") (class . "note")) "<p>yepp!</p>")
 			 (div
 			  ((id . "TEI"))
 			  "\n      Trying to load file ... (This page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.)\n    ")

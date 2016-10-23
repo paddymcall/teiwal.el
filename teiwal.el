@@ -194,9 +194,9 @@ similar stuff."
 			  ((charset . "utf-8")))
 			 "\n"
 			 ;;; add webcomponents first
-			 (script
-			  ((src . "/js/webcomponentsjs-0.7.22/webcomponents.min.js"))
-			  "\n// polyfill stuff: https://github.com/webcomponents/webcomponentsjs \n")
+			 ;; (script
+			 ;;  ((src . "/js/webcomponentsjs-0.7.22/webcomponents.min.js"))
+			 ;;  "\n// polyfill stuff: https://github.com/webcomponents/webcomponentsjs \n")
 			 (script
 			  ((src . "/CETEIcean/dist/CETEI.js"))
 			  "\n// See http://teic.github.io/CETEIcean\n")
@@ -233,7 +233,7 @@ similar stuff."
 				    "    let root = document.getElementById(\"TEI\");"
 				    "    while (root.firstChild) {root.removeChild(root.firstChild);};"
 				    "    root.appendChild(data);"
-				    "});")
+				    "},  saritCallback);")
 				   (url-hexify-string path)))))))
 	  (ws-response-header proc 200
 			      (cons "Content-type" "text/html"))

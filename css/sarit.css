@@ -65,3 +65,15 @@ tei-note:active, tei-app:active {
 
 
 
+html {
+  margin: 0;
+  padding: 0;
+  margin-left: 2em;
+  margin-right: 4em;
+  padding: 2.5em;
+  /* override font families */
+  font-family: "Noto Sans Devanagari", "Noto Sans", sans-serif; 
+  font-size: 12pt;
+  background-color: white;
+  color: #292929;
+}

@@ -86,11 +86,19 @@ tei-lg {
   display: block;
   margin-bottom: 1em;
   margin-top: 1em;
-  margin-left: 8%;
-  max-width: 30%;
+  margin-left: 2%;
+  min-width: 20%;
+  max-width: 40%;
   padding: .5em 1.5em 1.5em 1.5em;
   position: relative;
   text-align: justify;
+}
+
+tei-l {
+    max-width: 80%;
+    margin-top: 1%;
+    padding-left: 4% ;
+    text-indent: -4% ;
 }
 
 tei-lg[n]:after {
@@ -102,7 +110,7 @@ tei-lg[n]:after {
 
 tei-lg[type^=base] {
     font-size: 130%;
-    background: cornsilk;    
+    background: cornsilk;
 }
 
 /* p */

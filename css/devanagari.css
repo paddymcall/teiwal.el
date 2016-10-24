@@ -1,0 +1,5 @@
+/* set up for devanagari fonts */
+
+/* https://fonts.google.com/earlyaccess */
+/* just use noto devanagari */
+@import url(http://fonts.googleapis.com/earlyaccess/notosansdevanagari.css); 

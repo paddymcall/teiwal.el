@@ -83,7 +83,7 @@
   :group 'teiwal
   :type 'string)
 
-(defcustom teiwal/listen-port 9003
+(defcustom teiwal/listen-port 9004
   "Network port to listen on."
   :group 'teiwal
   :type 'integer)
@@ -229,7 +229,7 @@ similar stuff."
 			   ))
 			 (title
 			  ()
-			  ,(format "TEIwal for: %s" path)))
+			  ,(format "%s (teiwal)" path)))
 		   (body () "\n    "
 			 (div
 			  ((id . "TEI"))

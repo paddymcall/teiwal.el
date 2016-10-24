@@ -63,7 +63,56 @@ tei-note:active, tei-app:active {
     animation-duration: 0.5s;
 }
 
+/* don't break on lb */
+tei-lb:after {
+    content: "[" attr(ed) attr(edRef) "/" attr(n) "]";
+    font-size: 70%;
+    vertical-align: super;
+    color: gray;
+}
 
+tei-pb:after {
+    content: "[" attr(ed) attr(edRef) "/" attr(n) "]";
+    color: gray;
+    font-size: 70%;
+    vertical-align: sub;
+}
+
+tei-lg {
+  background: offwhite;
+  border-radius: 15px;
+  /* border: 1px solid black; */
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  display: block;
+  margin-bottom: 1em;
+  margin-top: 1em;
+  margin-left: 8%;
+  max-width: 30%;
+  padding: .5em 1.5em 1.5em 1.5em;
+  position: relative;
+  text-align: justify;
+}
+
+tei-lg[n]:after {
+    content: "[" attr(n) "]";
+    color: gray;
+    font-size: 70%;
+    float: right;
+}
+
+tei-lg[type^=base] {
+    font-size: 130%;
+    background: cornsilk;    
+}
+
+/* p */
+tei-p {
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  text-align: justify;
+  max-width: 50%;
+}
 
 html {
   margin: 0;
@@ -73,7 +122,7 @@ html {
   padding: 2.5em;
   /* override font families */
   font-family: "Noto Sans Devanagari", "Noto Sans", sans-serif; 
-  font-size: 12pt;
+  font-size: 130%;
   background-color: white;
   color: #292929;
 }

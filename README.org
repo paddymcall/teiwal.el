@@ -1,6 +1,10 @@
 #+TITLE: Emacs wrapper around CETEIcean
+#+AUTHOR: Patrick McAllister
 
 * Customizing CETEIcean
+
+From https://github.com/TEIC/CETEIcean/blob/master/README.md,
+<2016-10-24 Mon>:
 
 #+BEGIN_QUOTE
 TEI documents displayed using CETEIcean can be customized via CSS or

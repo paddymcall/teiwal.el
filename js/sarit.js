@@ -33,72 +33,90 @@ var saritBehaviors =     {
             };
 	},
 	// Inserts the first array element before tei:add, and the second, after.
-	"add": ["`","´"]// ,
-// 	// Work with notes
-// 	"note": function() {
-//             return function() {
-// 		var shadow = this.createShadowRoot();
-// 		// count the note
-// 		noteCount = noteCount + 1;
-// 		// make sure we have a global id (also in the light
-// 		// dom, not just in the shadow context here)
-// 		var noteId;
-// 		if (this.hasAttribute("xml:id")) {
-// 		    noteId = this.getAttribute("xml:id");
-// 		} else {
-// 		    // guess an id:
-// 		    noteId = "auto-note-" + noteCount.toString();
-// 		    this.id = noteId;
-// 		}
-// 		// set up a link element to the content of the note,
-// 		// and a section for the content 
-// 		var link = document.createElement("a");
-// 		var note = document.createElement("section");
-// 		note.className = "note";
-// 		link.className = "note";
-// 		link.href = "#" + noteId;
-// 		// use running number for display
-// 		link.innerHTML = "[" + noteCount + "]";
-// 		note.innerHTML = this.innerHTML + `<a href="#" class="closebtn">×</a>`;
-// 		// glue things together:
-// 		// add a style to the shadow root (applies in the shadow)
-// 		shadow.innerHTML = `
-// <style>
-
-// sup { display: inline; }
-
-// section.note {
-//     display: none;
-// }
-
-// /* close & open on target selection; see http://www.w3schools.com/cssref/sel_target.asp */
-// /* The button used to close the modal */
-// .closebtn {
-//   text-decoration: none;
-//   float: right;
-//   font-size: 35px;
-//   font-weight: bold;
-// }
-
-// /* host = tei-note element */
-// :host(:target) section.note { 
-//   display: block;
-//   margin: 1.5em auto 1.5em auto;
-//   padding: .5em 1.5em 1.5em 1.5em;
-//   border: 1px solid black;
-//   border-radius: 15px;
-//   width: 325px;
-//   position: relative;
-//   border: 1px solid #aaaaaa;
-//   background: #fafafa;
-// }
-
-// </style>
-// `;
-// 		shadow.appendChild(document.createElement("sup")).appendChild(link);
-// 		shadow.appendChild(note);
-//             };
-// 	}
+	"add": ["`","´"]
+	//// trying to figure out notes here:
+	// okay statically, but puts a in note
+	// "note":  ["<a href=\"note-1\">" + "[n]" + "</a>"] // --> <note><a href="note-1">[n]</a>....</note>
+	// another attempt: dynamically construct array; fails on `this'?
+	// "note":
+	// (function () {
+	//     // count the note
+	//     noteCount = noteCount + 1;
+	//     var noteId;
+	//     if (this.getAttribute("xml:id")) {
+	//     	noteId = this.getAttribute("xml:id");
+	//     } else {
+	//     	// guess an id:
+	//     	noteId = "auto-note-" + noteCount.toString();
+	//     	this.id = noteId;
+	//     }
+	//     return ["<a href=\"note-1\">" + "[n]" + "</a>"];
+	// })()
+	// 	// Work with notes
+	// 	"note": function() { // plan 33
+	//             return function() {
+	// 		var shadow = this.createShadowRoot();
+	// 		// count the note
+	// 		noteCount = noteCount + 1;
+	// 		// make sure we have a global id (also in the light
+	// 		// dom, not just in the shadow context here)
+	// 		var noteId;
+	// 		if (this.hasAttribute("xml:id")) {
+	// 		    noteId = this.getAttribute("xml:id");
+	// 		} else {
+	// 		    // guess an id:
+	// 		    noteId = "auto-note-" + noteCount.toString();
+	// 		    this.id = noteId;
+	// 		}
+	// 		// set up a link element to the content of the note,
+	// 		// and a section for the content 
+	// 		var link = document.createElement("a");
+	// 		var note = document.createElement("section");
+	// 		note.className = "note";
+	// 		link.className = "note";
+	// 		link.href = "#" + noteId;
+	// 		// use running number for display
+	// 		link.innerHTML = "[" + noteCount + "]";
+	// 		note.innerHTML = this.innerHTML + `<a href="#" class="closebtn">×</a>`;
+	// 		// glue things together:
+	// 		// add a style to the shadow root (applies in the shadow)
+	// 		shadow.innerHTML = `
+	// <style>
+	
+	// sup { display: inline; }
+	
+	// section.note {
+	//     display: none;
+	// }
+	
+	// /* close & open on target selection; see http://www.w3schools.com/cssref/sel_target.asp */
+	// /* The button used to close the modal */
+	// .closebtn {
+	//   text-decoration: none;
+	//   float: right;
+	//   font-size: 35px;
+	//   font-weight: bold;
+	// }
+	
+	// /* host = tei-note element */
+	// :host(:target) section.note { 
+	//   display: block;
+	//   margin: 1.5em auto 1.5em auto;
+	//   padding: .5em 1.5em 1.5em 1.5em;
+	//   border: 1px solid black;
+	//   border-radius: 15px;
+	//   width: 325px;
+	//   position: relative;
+	//   border: 1px solid #aaaaaa;
+	//   background: #fafafa;
+	// }
+	
+	// </style>
+	// `;
+	// 		shadow.appendChild(document.createElement("sup")).appendChild(link);
+	// 		shadow.appendChild(note);
+	//             };
+	// 	}
     },
     "fallbacks" : {
 	"ptr": function(elt) {
@@ -120,6 +138,45 @@ var saritBehaviors =     {
 
 
 
+// global callback function
 var saritCallback = function (x) {
-    console.log(x);
+    console.log("saritCallback called!");
+};
+
+// per element callback function
+var saritPerElementFunc = function (x) {
+    // switch (x.localName) {
+    // case "tei-note":
+    // 	// add an e element, but inside the note
+    // 	(function (note) {
+    // 	    // parent is null at this point:
+    // 	    // console.log("Parent: " + note.parentElement);
+    // 	    noteCount = noteCount + 1;
+    // 	    var noteRef = document.createElement("a");
+    // 	    noteRef.href = "#note-" + noteCount;
+    // 	    noteRef.className = "note";
+    // 	    noteRef.innerHTML = "[n]";
+    // 	    note.appendChild(noteRef);
+    // 	})(x);
+    // 	break;
+    // };
+};
+
+
+// the setup function
+var saritSetup = function (teidoc) {
+    var c = new CETEI();
+    c.addBehaviors(saritBehaviors);
+    c.getHTML5(teidoc,// the document to use
+	       // the callback function
+	       function(data) {
+		   let root = document.getElementById("TEI");
+		   while (root.firstChild) {
+		       root.removeChild(root.firstChild);
+		   };
+		   root.appendChild(data);
+	       },
+	       // something to do with each element during
+	       // construction
+	       saritPerElementFunc);
 };

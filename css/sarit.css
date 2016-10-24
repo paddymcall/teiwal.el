@@ -15,7 +15,7 @@
 }
 
 /* make note so small as to show only first part */
-tei-note {
+tei-note, tei-app {
     display: inline-block;
     max-width: 1em;
     max-height: 1em;
@@ -23,7 +23,7 @@ tei-note {
     font-size: 80%;
 }
 
-tei-note::before {
+tei-note::before, tei-app::before {
     content: "[n]";
     cursor: pointer;
     color: limegreen;
@@ -31,7 +31,7 @@ tei-note::before {
     vertical-align: super;
 }
 
-tei-note:active::before {
+tei-note:active::before, tei-app:active::before {
     content: "[x]";
     cursor: pointer;
     color: red;
@@ -44,7 +44,7 @@ tei-note:active::before {
 
 /* tei-note::before { content: "[n]";} */
 
-tei-note:active {
+tei-note:active, tei-app:active {
     display: block;
     background: antiquewhite;
     border-radius: 15px;

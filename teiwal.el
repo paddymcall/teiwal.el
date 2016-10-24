@@ -225,15 +225,7 @@ similar stuff."
 			 "\n    "
 			 (script ()
 				 ,(format
-				   (concat
-				    "var c = new CETEI();"
-				    ;; saritBehaviors is defined in sarit.js
-				    "c.addBehaviors(saritBehaviors);"
-				    "c.getHTML5('buffer/%s', function(data){"
-				    "    let root = document.getElementById(\"TEI\");"
-				    "    while (root.firstChild) {root.removeChild(root.firstChild);};"
-				    "    root.appendChild(data);"
-				    "},  saritCallback);")
+				   "saritSetup('buffer/%s');"
 				   (url-hexify-string path)))))))
 	  (ws-response-header proc 200
 			      (cons "Content-type" "text/html"))

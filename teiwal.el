@@ -203,6 +203,13 @@ similar stuff."
 			 (script
 			  ((src . "/js/sarit.js"))
 			  "\n// SARIT specific extensions \n")
+			 
+			 (link
+			  ((rel . "stylesheet")
+			   (href . "https://necolas.github.io/normalize.css/5.0.0/normalize.css")
+			   (media . "screen")
+			   ;; (charset . "utf-8")
+			   ))
 			 (link
 			  ((rel . "stylesheet")
 			   (href . "/CETEIcean/test/CETEIcean.css")

@@ -1,5 +1,38 @@
 #+TITLE: Emacs wrapper around CETEIcean
 
+* Customizing CETEIcean
+
+#+BEGIN_QUOTE
+TEI documents displayed using CETEIcean can be customized via CSS or
+by specifying behaviors for individual elements. For documentation on
+behaviors see the wiki.
+#+END_QUOTE
+
+1) CSS: very elegant, but in Shadow DOM you cannot style inside a
+   shadow object (``Scoped CSS: CSS defined inside shadow DOM is
+   scoped to it. Style rules don't leak out and page styles don't
+   bleed in.", from [[https://developers.google.com/web/fundamentals/getting-started/primers/shadowdom][google shadowdom]]).  At least in theory.
+2) If you specify behaviors as per the wiki
+   (https://github.com/TEIC/CETEIcean/wiki/Anatomy-of-a-behaviors-object):
+   1) before/after --> fine; will, however, put before/after /into/ the element.
+   2) with functions: you're creating your own Shadow dom, and have no
+      access to the outside HTML things (id-s, etc.); possible to
+      attach css rules or javascript that affects only this part,
+      however.
+
+This means it's not clear to me how to render things that should not
+go into the main view (note, app) of a document. 
+
+E.g., for notes:
+
+1) ~"note": ["<a href=\"#note-1\">" + "[n]" + "</a>"]~ --> ~<tei-note><a
+   href="#note-1">[n]</a>....</tei-note>~, plus I can't figure out the
+   reference.
+2) [[file:js/sarit.js::/%20"note":%20function()%20{%20/%20plan%2033][plan 33]]: complicated, and does not really improve the situation: I
+   only get ~<tei-note><a/>....</tei-note>~, and again cannot make the
+   ~<a/>~ appear without violence to css rules.
+3) css only solution: best for now; see [[./css/sarit.css]]. 
+
 
 * Shadow DOM
 

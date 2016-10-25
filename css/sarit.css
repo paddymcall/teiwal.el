@@ -37,7 +37,6 @@ tei-note:active::before, tei-app:active::before {
     color: red;
     text-decoration: none;
     float: right;
-    font-size: 120%;
     font-weight: bold;
     color: red;
 }
@@ -49,7 +48,6 @@ tei-note:active, tei-app:active {
     background: antiquewhite;
     border-radius: 15px;
     border: 1px solid black;
-    font-size: 100%;
     margin: auto;
     max-height: 100%;
     max-width: 100%;
@@ -88,7 +86,7 @@ tei-lg {
   margin-top: 1em;
   margin-left: 2%;
   min-width: 20%;
-  max-width: 40%;
+  max-width: 500px;
   padding: .5em 1.5em 1.5em 1.5em;
   position: relative;
   text-align: justify;
@@ -118,7 +116,7 @@ tei-p {
   margin-top: 1em;
   margin-bottom: 1em;
   text-align: justify;
-  max-width: 50%;
+  max-width: 700px;
 }
 
 html {
@@ -129,7 +127,14 @@ html {
   padding: 2.5em;
   /* override font families */
   font-family: "Noto Sans Devanagari", "Noto Sans", sans-serif; 
-  font-size: 130%;
   background-color: white;
   color: #292929;
+}
+
+nav ol li ol {
+    display: none;
+}
+
+nav ol li:hover ol {
+    display: block;
 }

@@ -88,6 +88,7 @@
   :group 'teiwal
   :type 'integer)
 
+
 (defcustom teiwal/log-buffer-name "*teiwal server log*"
   "Name of buffer to log to."
   :group 'teiwal

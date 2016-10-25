@@ -186,29 +186,60 @@ var saritSetup = function (teidoc) {
 
 var saritInsertNavList = function () {
     var headers = document.getElementsByTagName("tei-head");
-    var nav = document.getElementById("nav").appendChild(document.createElement("ul"));
-    var link;
+    var items = [];
     // console.log("Headers found: ", headers.length);
-    for (var i = 0, header; header = headers[i]; i++) {
-	// console.log("Looping: index ", i, "header ", header);
-	link = document.createElement("a");
-	var parent = header.parentElement;
-	var id;
-	if (header.id) {
-	    id = header.id;
-	} else if (parent.id) {
-	    id = parent.id;
-	} else {
-	    id = "temp-header-" + i;
-	    header.id = id;
-	}
+    if (headers.length > 0) {
+	var factor = $(headers[0]).parentsUntil("#TEI").length - 1;
+	for (var i = 0, header; header = headers[i]; i++) {
+	    // console.log("Looping: index ", i, "header ", header);
+	    // find parent element (often, a div) and an id to link to
+	    var parent = header.parentElement;
+	    var id;
+	    if (header.id) {
+		id = header.id;
+	    } else if (parent.id) {
+		id = parent.id;
+	    } else {
+		id = "temp-header-" + i;
+		header.id = id;
+	    }
+	    var link = {};
+	    link['to'] = "#" + id;
+	    link['depth'] = $(header).parentsUntil("#TEI").length - factor;
+	    link['text'] = header.innerHTML;
+	    items.push(link);
 
-	link.href = "#" + id;
-	// link.addClass($(header).parentsUntil("#TEI").length.toString());
-	var depth = $(header).parentsUntil("#TEI").length;
-	console.log("depth: ", depth);
-	link.innerHTML = depth + " " + header.innerHTML;
-	nav.appendChild(document.createElement("li")).appendChild(link);
+	    // link.addClass($(header).parentsUntil("#TEI").length.toString());
+	}
+	// build a list
+	var ol = "<ol>\n";
+	for (var j = 0, li; li = items[j]; j++) {
+	    // figure which ol to append to
+	    if (j == 0) {
+		console.log("First item");
+		ol = ol + "<li><a href=\"" + li["to"] + "\">" + li["text"] + "</a>\n";
+	    } else if (li['depth'] == items[j-1]['depth']) {
+		// same list as before; just append a new li + a;
+		console.log("Same depth as before: ", li, "list: ", ol);
+		ol = ol + "</li><li><a href=\"" + li["to"] + "\">" + li["text"] + "</a>\n";
+	    } else if ( li['depth'] > items[j-1]['depth']) {
+		// one (or more) levels deeper: open new ol, add li + a
+		ol = ol + "<ol><li><a href=\"" + li["to"] + "\">" + li["text"] + "</a>\n";
+		console.log("Deeper than before: ", li, "list: ", ol);
+	    } else {
+		// up one or more levels: close open ol-s, and append li + a
+		console.log("Level up here: ", li, "list: ", ol);
+		ol = ol + "</li></ol><li><a href=\"" + li["to"] + "\">" + li["text"] + "</a></li>\n";
+	    }
+	}
+	i = 0;
+	do {
+	    console.log("Closing ol");
+	    ol = ol + "</ol>";
+	    i++;
+	}
+	while (i < items.pop()["depth"] - items[0]["depth"]);
+	document.getElementById("nav").innerHTML = ol + "</ol>";
     }
 
 };

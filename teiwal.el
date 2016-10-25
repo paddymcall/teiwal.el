@@ -193,9 +193,9 @@ similar stuff."
 			 (meta
 			  ((charset . "utf-8")))
 			 "\n"
-			 ;;; add webcomponents first
+			 ;;; add webcomponents first: don't help? 
 			 ;; (script
-			 ;;  ((src . "/js/webcomponentsjs-0.7.22/webcomponents.min.js"))
+			 ;;  ((src . "/js/webcomp/webcomponentsjs-0.7.22/webcomponents.js"))
 			 ;;  "\n// polyfill stuff: https://github.com/webcomponents/webcomponentsjs \n")
 			 (script
 			  ((src . "/CETEIcean/dist/CETEI.js"))

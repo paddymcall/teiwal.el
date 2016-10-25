@@ -9,6 +9,7 @@
  * handled. The function names must match the name of the element they
  * will be applied to.
  ***********************************/
+
 // a running number for notes
 var noteCount = 0;
 var saritBehaviors =     {
@@ -32,6 +33,7 @@ var saritBehaviors =     {
 		shadow.appendChild(b);
             };
 	},
+	"lg": ["", "<div class=\"verse-num\">[$@n]</div>"],
 	// Inserts the first array element before tei:add, and the second, after.
 	"add": ["`","´"]
 	//// trying to figure out notes here:
@@ -170,7 +172,7 @@ var saritSetup = function (teidoc) {
     c.getHTML5(teidoc,// the document to use
 	       // the callback function
 	       function(data) {
-		   let root = document.getElementById("TEI");
+		   var root = document.getElementById("TEI");
 		   while (root.firstChild) {
 		       root.removeChild(root.firstChild);
 		   };

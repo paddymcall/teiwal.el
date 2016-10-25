@@ -101,8 +101,7 @@ tei-l {
     text-indent: -4% ;
 }
 
-tei-lg[n]:after {
-    content: "[" attr(n) "]";
+tei-lg div.verse-num {
     color: gray;
     font-size: 70%;
     float: right;

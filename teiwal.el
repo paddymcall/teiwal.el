@@ -149,7 +149,17 @@ similar stuff."
 
 (defun teiwal/serve-buffer (request)
   (with-slots (process headers) request
-    (let ((path (substring (cdr (assoc :GET headers)) 1)))
+    (let ((path	;; we need to decode to find in buffer list
+	   ;; (decode-coding-string (url-unhex-string "tattvasa%E1%B9%83grahapa%C3%B1jik%C4%81.xml")
+	   ;; 			 'utf-8);; "tattvasaṃgrahapañjikā.xml"
+	   (decode-coding-string
+	    ;; (url-unhex-string "tattvasa%E1%B9%83grahapa%C3%B1jik%C4%81.xml")
+	    (url-unhex-string
+	     (or
+	      ;; e.g.: "tattvasa%E1%B9%83grahapa%C3%B1jik%C4%81.xml"
+	      (substring (cdr (assoc :GET headers)) 1)
+	      ""))
+	    'utf-8)))
       (cond
        ((string= path "")
 	(with-temp-buffer
@@ -193,16 +203,10 @@ similar stuff."
 			 (meta
 			  ((charset . "utf-8")))
 			 "\n"
-			 ;;; add webcomponents first: don't help? 
+;;; add webcomponents first: don't help? 
 			 ;; (script
 			 ;;  ((src . "/js/webcomp/webcomponentsjs-0.7.22/webcomponents.js"))
 			 ;;  "\n// polyfill stuff: https://github.com/webcomponents/webcomponentsjs \n")
-			 (script
-			  ((src . "/CETEIcean/dist/CETEI.js"))
-			  "\n// See http://teic.github.io/CETEIcean\n")
-			 (script
-			  ((src . "/js/sarit.js"))
-			  "\n// SARIT specific extensions \n")
 			 (link
 			  ((rel . "stylesheet")
 			   (href . "/css/normalize.css")
@@ -231,13 +235,28 @@ similar stuff."
 			  ()
 			  ,(format "%s (teiwal)" path)))
 		   (body () "\n    "
+			 (nav ((id . "nav"))
+			      ;; keep content here: avoids <nav/>, which is illegal.
+			      "\n")
 			 (div
 			  ((id . "TEI"))
 			  "\n      Trying to load file ... (This page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.)\n    ")
 			 "\n    "
+			 (script
+			  ((src . "/CETEIcean/dist/CETEI.js"))
+			  "\n// See http://teic.github.io/CETEIcean\n")
+			 (script
+			  ((src . "https://code.jquery.com/jquery-1.12.4.js"))
+			  "\n // Jquery")
+			 (script
+			     ((src . "/js/sarit.js"))
+			     "\n// SARIT specific extensions \n")
 			 (script ()
 				 ,(format
-				   "saritSetup('buffer/%s');"
+				   (concat
+				    "$(document).ready(function(){"
+				    "saritSetup('buffer/%s');"
+				    "});")
 				   (url-hexify-string path)))))))
 	  (ws-response-header proc 200
 			      (cons "Content-type" "text/html"))
@@ -252,6 +271,9 @@ similar stuff."
        ((file-exists-p (expand-file-name path "/home/beta/webstuff/emacs-things/teiwal/"))
 	(ws-send-file proc (expand-file-name path "/home/beta/webstuff/emacs-things/teiwal/")))
        (t
+	(with-current-buffer (get-buffer (teiwal/log-buffer))
+	  (save-excursion (goto-char (point-max))
+			  (insert (format "Not found: %s" (pp request (current-buffer))))))
 	(ws-response-header proc 404  '("Content-type" . "text/plain"))
 	(process-send-string proc "Ahem, not found?"))))))
 
@@ -264,5 +286,51 @@ Optionally explicitly set MIME-TYPE, otherwise it is guessed by
 An extremely optimistic templating system, ripped off from `ws-send-file'."
   (let ((mime (or mime-type
                   (mm-default-file-encoding path)
-                  "application/octet-stream")))
-    ))
+                  "application/octet-stream")))))
+
+
+(defun teiwal/parse-xml (buffer)
+  "Abstract XML parsing a bit."
+  (with-current-buffer buffer
+    (if (featurep 'libxml-parse-xml-region)
+	(condition-case nil
+	    (libxml-parse-xml-region (point-min) (point-max))
+	  (error
+	   (condition-case nil
+	       (caddr (caddr (libxml-parse-html-region (point-min) (point-max))))
+	     (error
+	      (car (xml-parse-region (point-min) (point-max)))))))
+      (car (xml-parse-region (point-min) (point-max))))))
+
+(defun teiwal/build-nav (buffer)
+  "For BUFFER, build a navigation list."
+  (let ((xml (teiwal/parse-xml buffer)))
+    (when xml
+      (teiwal/div-to-list xml))))
+
+
+(defun teiwal/div-to-list (sxml)
+  "Make all div elements in SXML into navigation links.
+
+Often exceeds max-depth, though.  Rewrite with xmltok."
+  (cond
+   ;; end recursion: empty, string, attributes, or symbol (=tag)
+   ((null sxml) '())
+   ((stringp sxml) '())
+   ;; ignore attributes here (cdr of a consp is a string)
+   ((and (listp sxml)
+	 (symbolp (car sxml))
+	 (stringp (cdr sxml)))
+    '())
+   ;; keep some
+   ((and (symbolp sxml)
+	 (member sxml '(head)))
+    sxml)
+   ;; discard the rest
+   ((symbolp sxml) '())
+   ;; continue on lists
+   ((listp sxml)
+    (cons (delq nil (teiwal/div-to-list (car sxml)))
+	  (delq nil (teiwal/div-to-list (cdr sxml)))))
+   (t (error "Sorry, very unexpected"))))
+

@@ -177,8 +177,38 @@ var saritSetup = function (teidoc) {
 		       root.removeChild(root.firstChild);
 		   };
 		   root.appendChild(data);
+		   saritInsertNavList();
 	       },
 	       // something to do with each element during
 	       // construction
 	       saritPerElementFunc);
+};
+
+var saritInsertNavList = function () {
+    var headers = document.getElementsByTagName("tei-head");
+    var nav = document.getElementById("nav").appendChild(document.createElement("ul"));
+    var link;
+    // console.log("Headers found: ", headers.length);
+    for (var i = 0, header; header = headers[i]; i++) {
+	// console.log("Looping: index ", i, "header ", header);
+	link = document.createElement("a");
+	var parent = header.parentElement;
+	var id;
+	if (header.id) {
+	    id = header.id;
+	} else if (parent.id) {
+	    id = parent.id;
+	} else {
+	    id = "temp-header-" + i;
+	    header.id = id;
+	}
+
+	link.href = "#" + id;
+	// link.addClass($(header).parentsUntil("#TEI").length.toString());
+	var depth = $(header).parentsUntil("#TEI").length;
+	console.log("depth: ", depth);
+	link.innerHTML = depth + " " + header.innerHTML;
+	nav.appendChild(document.createElement("li")).appendChild(link);
+    }
+
 };

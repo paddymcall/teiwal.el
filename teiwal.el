@@ -221,26 +221,23 @@ similar stuff."
 			 (link
 			  ((rel . "stylesheet")
 			   (href . "/CETEIcean/test/CETEIcean.css")
-			   (media . "screen")
-			   ;; (charset . "utf-8")
-			   ))
+			   (media . "screen")))
 			 (link
 			  ((rel . "stylesheet")
-			   (href . "/css/less.css")
-			   (media . "screen")
-			   ;; (charset . "utf-8")
-			   ))
+			   (href . "/css/less.css")))
 			 (link
 			  ((rel . "stylesheet")
-			   (href . "/css/sarit.css")
-			   (media . "screen")
-			   ;; (charset . "utf-8")
-			   ))
+			   (href . "/css/sarit.css")))
+			 (meta
+			  ((name . "viewport")
+			   (content . "width=device-width, initial-scale=1"))
+			  "\n")
 			 (title
 			  ()
 			  ,(format "%s (teiwal)" path)))
 		   (body () "\n    "
-			 (nav ((id . "nav"))
+			 (nav ((id . "nav")
+			       (class . "small"))
 			      ;; keep content here: avoids <nav/>, which is illegal.
 			      "\n")
 			 (div

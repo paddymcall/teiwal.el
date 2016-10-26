@@ -120,24 +120,24 @@ tei-p {
 }
 
 html {
-  margin: 0;
-  padding: 0;
-  margin-left: 2em;
-  margin-right: 4em;
-  padding: 2.5em;
   /* override font families */
   font-family: "Noto Sans Devanagari", "Noto Sans", sans-serif; 
-  background-color: white;
-  color: #292929;
 }
 
+tei-body > tei-head {
+  font-size: 180%;
+}
+
+tei-div > tei-head {
+  font-size: 170%;
+}
 
 /* navigation things */
 /* see https://www.thecssninja.com/css/css-tree-menu for the main idea */
 
 nav {
-    width: 150px;
-    float: left;
+    width: 25%;
+    float: right;
     display: inline;
     margin: 0;
     padding: 0;

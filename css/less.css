@@ -60,7 +60,7 @@ a img {border: 0;}
 }
 
 body {
-	font: 17px/24px Palatino, Constantia, "Palatino Linotype", serif;
+	font: 17px/24px "Noto Sans Devanagari", "Noto Sans", sans-serif; 
 }
 
 .small, small {
@@ -89,7 +89,7 @@ px      68    160    252    344    436    528    620    712    804    896    */
 body {
 	width: 896px;
 	padding: 72px 48px 84px;
-	background: rgb(232,232,232);
+	background: ghostwhite;
 	color: rgb(60,60,60);
 	-webkit-text-size-adjust: 100%; /* Stops Mobile Safari from auto-adjusting font-sizes */
 }

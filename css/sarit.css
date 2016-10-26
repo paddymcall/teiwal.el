@@ -131,10 +131,51 @@ html {
   color: #292929;
 }
 
-nav ol li ol {
-    display: none;
+
+/* navigation things */
+/* see https://www.thecssninja.com/css/css-tree-menu for the main idea */
+
+nav {
+    width: 150px;
+    float: left;
+    display: inline;
+    margin: 0;
+    padding: 0;
+    margin-right: 10px;
 }
 
-nav ol li:hover ol {
+
+nav li {
+    position: relative;
+    margin-left: -15px;
+    list-style: none;
+}
+
+nav li input {
+    content: "+";
+}
+
+nav li input:checked {
+    content: "-";
+}
+
+nav li input + ol > li {
+    display: none;
+    margin-left: -14px !important;
+    padding-left: 1px;
+}
+
+nav li input:checked + ol {
+    margin: -1.25em 0 0 -44px; /* 20px */
+    padding: 1.563em 0 0 80px;
+    height: auto;
+}
+
+nav li input:checked + ol > li {
     display: block;
+    margin: 0 0 0.125em;  /* 2px */
+}
+
+nav li input:checked + ol > li:last-child {
+    margin: 0 0 0.063em; /* 1px */
 }

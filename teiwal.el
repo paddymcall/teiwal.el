@@ -211,18 +211,22 @@ similar stuff."
 			 (link
 			  ((rel . "stylesheet")
 			   (href . "/css/normalize.css")
-			   (media . "screen")
 			   ;; (charset . "utf-8")
 			   ))
 			 (link
 			  ((rel . "stylesheet")
 			   (href . "/css/devanagari.css")
-			   (media . "screen")
 			   ;; (charset . "utf-8")
 			   ))
 			 (link
 			  ((rel . "stylesheet")
 			   (href . "/CETEIcean/test/CETEIcean.css")
+			   (media . "screen")
+			   ;; (charset . "utf-8")
+			   ))
+			 (link
+			  ((rel . "stylesheet")
+			   (href . "/css/less.css")
 			   (media . "screen")
 			   ;; (charset . "utf-8")
 			   ))

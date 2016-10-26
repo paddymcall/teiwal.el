@@ -185,7 +185,6 @@ tei-bibl {
 tei-bibl[data-tei-rend~="block"], bibl[data-tei-rendition~="#block"] {
   display: block;
   padding-left: 2em;
-  text-indent: -2em;
 }
 tei-biblFull {
   display: block;
@@ -581,19 +580,16 @@ tei-handShift {
 /* Need head with TEI parent to distinguish from HTML head */
 tei-TEI tei-head {
   display: block;
-  font-family: Arvo, sans-serif;
   font-weight: normal;
 }
 tei-body > tei-head {
   font-size: 180%;
-  text-indent: -0.5em;
 }
 tei-div.textpart {
   display: none;
 }
 tei-div > tei-head {
   font-size: 170%;
-  text-indent: -0.5em;
 }
 tei-div > tei-div > tei-head {
   font-size: 155%;
@@ -886,7 +882,6 @@ tei-listWit > tei-head {
 tei-listWit > tei-witness {
   display: list-item;
   margin-left: 2em;
-  text-indent: -1.1em;
 }
 tei-witness > tei-listWit {
   display: inline;

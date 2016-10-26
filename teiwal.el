@@ -220,7 +220,7 @@ similar stuff."
 			   ))
 			 (link
 			  ((rel . "stylesheet")
-			   (href . "/CETEIcean/test/CETEIcean.css")
+			   (href . "/css/CETEIcean.css")
 			   (media . "screen")))
 			 (link
 			  ((rel . "stylesheet")
@@ -239,7 +239,7 @@ similar stuff."
 			 (nav ((id . "nav")
 			       (class . "small"))
 			      ;; keep content here: avoids <nav/>, which is illegal.
-			      "\n")
+			      "ToC loading, ...")
 			 (div
 			  ((id . "TEI"))
 			  "\n      Trying to load file ... (This page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.)\n    ")

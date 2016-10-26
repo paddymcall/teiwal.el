@@ -119,29 +119,19 @@ tei-p {
   max-width: 700px;
 }
 
-html {
-  /* override font families */
-  font-family: "Noto Sans Devanagari", "Noto Sans", sans-serif; 
-}
-
-tei-body > tei-head {
-  font-size: 180%;
-}
-
-tei-div > tei-head {
-  font-size: 170%;
-}
-
 /* navigation things */
 /* see https://www.thecssninja.com/css/css-tree-menu for the main idea */
 
 nav {
-    width: 25%;
+    width: 20%;
+    max-height: 60%;
     float: right;
     display: inline;
-    margin: 0;
-    padding: 0;
-    margin-right: 10px;
+    margin-top: 3em;
+    padding: .5em 1.5em 1.5em 1.5em;
+    margin-left: 10px;
+    position: fixed;
+    overflow: auto;
 }
 
 
@@ -179,3 +169,19 @@ nav li input:checked + ol > li {
 nav li input:checked + ol > li:last-child {
     margin: 0 0 0.063em; /* 1px */
 }
+
+#TEI {
+     float: left;
+     width: 80%; /* of the standard body width */
+     margin-right: 24px;
+     margin-bottom: 24px;
+     padding: 24px;
+}
+
+
+
+html {
+  /* override font families */
+  font-family: "Noto Sans Devanagari", "Noto Sans", sans-serif; 
+}
+

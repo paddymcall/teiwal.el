@@ -62,15 +62,13 @@ tei-note:active, tei-app:active {
 }
 
 /* don't break on lb */
-tei-lb:after {
-    content: "[" attr(ed) attr(edRef) "/" attr(n) "]";
-    font-size: 70%;
+tei-lb {
+    font-size: 50%;
     vertical-align: super;
     color: gray;
 }
 
-tei-pb:after {
-    content: "[" attr(ed) attr(edRef) "/" attr(n) "]";
+tei-pb {
     color: gray;
     font-size: 70%;
     vertical-align: sub;
@@ -90,6 +88,7 @@ tei-lg {
   padding: .5em 1.5em 1.5em 1.5em;
   position: relative;
   text-align: justify;
+  hyphens: auto;
 }
 
 tei-l {
@@ -117,6 +116,11 @@ tei-p {
   margin-bottom: 1em;
   text-align: justify;
   max-width: 700px;
+  hyphens: auto;
+}
+
+tei-hi[rend="bold"] {
+  font-weight:bold;
 }
 
 /* navigation things */
@@ -132,6 +136,26 @@ nav {
     margin-left: 10px;
     position: fixed;
     overflow: auto;
+    font-size: 100%;
+}
+
+nav a:link {
+    color: darkred;
+    text-decoration: none;
+}
+
+nav a:visited {
+    color: darkgreen;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: hotpink;
+    text-decoration: none;
+}
+
+nav a:active {
+    color: blue;
 }
 
 

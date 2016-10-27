@@ -12,6 +12,8 @@
 
 // a running number for notes
 var noteCount = 0;
+// a running number for line groups
+var lgCount = 0;
 var saritBehaviors =     {
     "handlers" : {
 	// Overrides the default ptr behavior, displaying a short link
@@ -35,90 +37,28 @@ var saritBehaviors =     {
 	},
 	"lg": ["", "<div class=\"verse-num\">[$@n]</div>"],
 	// Inserts the first array element before tei:add, and the second, after.
-	"add": ["`","´"]
-	//// trying to figure out notes here:
-	// okay statically, but puts a in note
-	// "note":  ["<a href=\"note-1\">" + "[n]" + "</a>"] // --> <note><a href="note-1">[n]</a>....</note>
-	// another attempt: dynamically construct array; fails on `this'?
-	// "note":
-	// (function () {
-	//     // count the note
-	//     noteCount = noteCount + 1;
-	//     var noteId;
-	//     if (this.getAttribute("xml:id")) {
-	//     	noteId = this.getAttribute("xml:id");
-	//     } else {
-	//     	// guess an id:
-	//     	noteId = "auto-note-" + noteCount.toString();
-	//     	this.id = noteId;
-	//     }
-	//     return ["<a href=\"note-1\">" + "[n]" + "</a>"];
-	// })()
-	// 	// Work with notes
-	// 	"note": function() { // plan 33
-	//             return function() {
-	// 		var shadow = this.createShadowRoot();
-	// 		// count the note
-	// 		noteCount = noteCount + 1;
-	// 		// make sure we have a global id (also in the light
-	// 		// dom, not just in the shadow context here)
-	// 		var noteId;
-	// 		if (this.hasAttribute("xml:id")) {
-	// 		    noteId = this.getAttribute("xml:id");
-	// 		} else {
-	// 		    // guess an id:
-	// 		    noteId = "auto-note-" + noteCount.toString();
-	// 		    this.id = noteId;
-	// 		}
-	// 		// set up a link element to the content of the note,
-	// 		// and a section for the content 
-	// 		var link = document.createElement("a");
-	// 		var note = document.createElement("section");
-	// 		note.className = "note";
-	// 		link.className = "note";
-	// 		link.href = "#" + noteId;
-	// 		// use running number for display
-	// 		link.innerHTML = "[" + noteCount + "]";
-	// 		note.innerHTML = this.innerHTML + `<a href="#" class="closebtn">×</a>`;
-	// 		// glue things together:
-	// 		// add a style to the shadow root (applies in the shadow)
-	// 		shadow.innerHTML = `
-	// <style>
-	
-	// sup { display: inline; }
-	
-	// section.note {
-	//     display: none;
-	// }
-	
-	// /* close & open on target selection; see http://www.w3schools.com/cssref/sel_target.asp */
-	// /* The button used to close the modal */
-	// .closebtn {
-	//   text-decoration: none;
-	//   float: right;
-	//   font-size: 35px;
-	//   font-weight: bold;
-	// }
-	
-	// /* host = tei-note element */
-	// :host(:target) section.note { 
-	//   display: block;
-	//   margin: 1.5em auto 1.5em auto;
-	//   padding: .5em 1.5em 1.5em 1.5em;
-	//   border: 1px solid black;
-	//   border-radius: 15px;
-	//   width: 325px;
-	//   position: relative;
-	//   border: 1px solid #aaaaaa;
-	//   background: #fafafa;
-	// }
-	
-	// </style>
-	// `;
-	// 		shadow.appendChild(document.createElement("sup")).appendChild(link);
-	// 		shadow.appendChild(note);
-	//             };
-	// 	}
+	"add": ["`","´"],
+	"pb": function() {
+	    return function() {
+		console.log("PB matched: ", this);
+		var shadow = this.createShadowRoot();
+		var span = document.createElement("span");
+		var ed = "[main]";
+		var num = "pb";
+		span.className = "pb";
+		if (this.hasAttribute("edRef")) {
+		    ed = this.getAttribute("edRef");
+		} else if (this.hasAttribute("ed")) {
+		    ed = this.getAttribute("ed");
+		}
+		if (this.hasAttribute("n")) {
+		    num = "p. " + this.getAttribute("n");
+		} 
+		span.innerHTML = ed + "/" + num;
+		shadow.appendChild(span);
+		shadow.appendChild(this);
+            };
+	}
     },
     "fallbacks" : {
 	"ptr": function(elt) {
@@ -133,8 +73,53 @@ var saritBehaviors =     {
 	// Note that this would be better done with CSS. Included for completeness.
 	"term": function(elt) {
 	    elt.setAttribute("style", "font-weight: bold");
+	},
+	"pb": function(elt) {
+	    // console.log("PB matched: ", elt);
+	    var span = document.createElement("span");
+	    var ed = "main";
+	    var num = "pb";
+	    span.className = "pb";
+	    if (elt.hasAttribute("edRef")) {
+		ed = elt.getAttribute("edRef");
+	    } else if (elt.hasAttribute("ed")) {
+		ed = elt.getAttribute("ed");
+	    }
+	    if (elt.hasAttribute("n")) {
+		num = elt.getAttribute("n");
+	    } 
+	    span.innerHTML = ed + "/" + num;
+	    elt.appendChild(span);
+	},
+	"lb": function (elt) {
+	    var span = document.createElement("span");
+	    var ed = "main";
+	    var num = "lb";
+	    span.className = "lb";
+	    if (elt.hasAttribute("edRef")) {
+		ed = elt.getAttribute("edRef");
+	    } else if (elt.hasAttribute("ed")) {
+		ed = elt.getAttribute("ed");
+	    }
+	    if (elt.hasAttribute("n")) {
+		num = elt.getAttribute("n");
+	    } 
+	    span.innerHTML = ed + "/" + num;
+	    // to insert before: elt.parentElement.insertBefore(span, elt);
+	    elt.appendChild(span);
+	},
+	"lg": function (elt) {
+	    var num = (function () { lgCount = lgCount + 1; return lgCount;})();
+	    if (elt.hasAttribute("n")) {
+		num = elt.getAttribute("n");
+	    } else {
+		num = lgCount + " (running number)";
+	    }
+	    var numDiv = document.createElement("div");
+	    numDiv.className = "verse-num";
+	    numDiv.innerHTML = "[v. " + num + "]";
+	    elt.appendChild(numDiv);
 	}
-
     }
 };
 
@@ -178,10 +163,12 @@ var saritSetup = function (teidoc) {
 		   };
 		   root.appendChild(data);
 		   saritInsertNavList();
-	       },
+	       }
+	       // ,
 	       // something to do with each element during
 	       // construction
-	       saritPerElementFunc);
+	       //saritPerElementFunc
+	      );
 };
 
 var saritInsertNavList = function () {

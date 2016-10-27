@@ -171,10 +171,13 @@ similar stuff."
 		   (head ()
 			 (title
 			  ()
-			  "TEIwal main window")
+			  "TEIwal buffer list")
 			 (meta
 			  ((charset . "utf-8"))))
 		   (body ()
+			 (h1
+			  ()
+			  "TEIwal list of buffers")
 			 (ol ()
 			     ,(mapconcat
 			       (lambda (buf)
@@ -184,7 +187,13 @@ similar stuff."
 					 'a
 					 (list
 					  (cons 'href (format "/%s" (url-hexify-string buf))))
-					 buf))))
+					 buf)
+					(format " <ul><li>file: %s</li><li>size: %s</li></ul>"
+						(or
+						 (buffer-file-name (get-buffer buf))
+						 "[no file]")
+						(buffer-size (get-buffer buf)))
+					)))
 			       (teiwal/get-nxml-buffers)
 			       "\n"))
 			 ))))
@@ -251,8 +260,8 @@ similar stuff."
 			  ((src . "https://code.jquery.com/jquery-1.12.4.js"))
 			  "\n // Jquery")
 			 (script
-			     ((src . "/js/sarit.js"))
-			     "\n// SARIT specific extensions \n")
+			  ((src . "/js/sarit.js"))
+			  "\n// SARIT specific extensions \n")
 			 (script ()
 				 ,(format
 				   (concat

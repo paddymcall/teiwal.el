@@ -212,27 +212,34 @@ var saritInsertNavList = function () {
 	    // link.addClass($(header).parentsUntil("#TEI").length.toString());
 	}
 	// build a list
-	var ol = "<ol>\n";
+	var ol = "";
+	var stack = [];
 	for (var j = 0, li; li = items[j]; j++) {
-	    // figure which ol to append to
-	    if (j == 0) {
-		console.log("First item");
-		ol = ol + "<li><a href=\"" + li["to"] + "\">" + li["text"] + "</a>\n";
-	    } else if (li['depth'] == items[j-1]['depth']) {
-		// same list as before; just append a new li + a;
-		console.log("Same depth as before: ", li, "list: ", ol);
-		ol = ol + "</li><li><a href=\"" + li["to"] + "\">" + li["text"] + "</a>\n";
-	    } else if ( li['depth'] > items[j-1]['depth']) {
-		// one (or more) levels deeper: open new ol, add li + a
-		ol = ol + "<input type=\"checkbox\" id=\"nav" + j + "\" />" +
-		    "<ol><li><a href=\"" + li["to"] + "\">" + li["text"] + "</a>\n";
-		console.log("Deeper than before: ", li, "list: ", ol);
-	    } else {
-		// up one or more levels: close open ol-s, and append li + a
-		console.log("Level up here: ", li, "list: ", ol);
-		ol = ol + "</li></ol><li><a href=\"" + li["to"] + "\">" + li["text"] + "</a>\n";
-	    }
+	    stack.push([li["to"], li["depth"], li["text"] ]);
+	    // // figure which ol to append to
+	    // if (j == 0) {
+	    // 	// console.log("First item");
+	    // 	ol = "<ol><li><a href=\"" + li["to"] + "\">" + li["text"] + "</a>\n";
+	    // 	stack.push([ "h", li["to"], li["depth"] ]);
+	    // } else if (li['depth'] == items[j-1]['depth']) {
+	    // 	// same list as before; just append a new li + a;
+	    // 	// console.log("Same depth as before: ", li, "list: ", ol);
+	    // 	ol = ol + "</li><li><a href=\"" + li["to"] + "\">" + li["text"] + "</a>\n";
+	    // 	stack.push([ "h", li["to"], li["depth"] ]);
+	    // } else if (li['depth'] > items[j-1]['depth']) {
+	    // 	// one (or more) levels deeper: open new ol, add li + a
+	    // 	ol = ol + "<input type=\"checkbox\" id=\"nav" + j + "\" />" +
+	    // 	    "<ol><li><a href=\"" + li["to"] + "\">" + li["text"] + "</a>\n";
+	    // 	stack.push([ "h", li["to"], li["depth"] ]);
+	    // 	// console.log("Deeper than before: ", li, "list: ", ol);
+	    // } else {
+	    // 	// up one or more levels: close open ol-s, and append li + a
+	    // 	// console.log("Level up here: ", li, "list: ", ol);
+	    // 	ol = ol + "</li></ol><li><a href=\"" + li["to"] + "\">" + li["text"] + "</a>\n";
+	    // 	stack.push([ "h", li["to"], li["depth"] ]);
+	    // }
 	}
+	console.log("Stack is: ", stack);
 	i = 0;
 	do {
 	    console.log("Closing ol");
@@ -240,6 +247,7 @@ var saritInsertNavList = function () {
 	    i++;
 	}
 	while (i < items.pop()["depth"] - items[0]["depth"]);
+	// console.log("Nav list is: ", ol, "</ol>" );
 	document.getElementById("nav").innerHTML = ol + "</ol>";
     }
 

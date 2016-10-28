@@ -119,6 +119,39 @@ var saritBehaviors =     {
 	    numDiv.className = "verse-num";
 	    numDiv.innerHTML = "[v. " + num + "]";
 	    elt.appendChild(numDiv);
+	},
+	"app": function (elt) {
+	    var from, to, id, appRef,anchor;
+	    console.log("Trying to fix app: ", elt);
+	    // stand off type apparatus entries
+	    if (elt.parentElement.localName == "tei-listapp") {
+		from = elt.getAttribute("from") || null;
+		console.log("Found app pointing to from: ", from);
+		if (from) {
+		    to = elt.getAttribute("to") || null;
+		    id = elt.getAttribute("id") || null;
+		    appRef = document.createElement("a");
+		    appRef.href = "#" + id;
+		    appRef.innerHTML = "app";
+		    console.log("Built app ref: ", appRef);
+		    if (to.match(/^#/)) {
+			console.log("Local pointer: ", to.split("#")[1]);
+			anchor = document.getElementById(to.split("#")[1]);
+		    } else {
+			anchor = document.getElementById(to);
+		    }
+		    console.log("Anchor is ", anchor);
+		    if (anchor) {
+			console.log("Anchoring to ", anchor);
+			if (anchor.innerHTML == "") {
+			    appRef.parentElement.insertBefore(appRef, anchor);
+			} else {
+			    anchor.insertBefore(appRef, anchor.childNodes[0]);
+			}
+		    }
+		}
+		
+	    }
 	}
     }
 };

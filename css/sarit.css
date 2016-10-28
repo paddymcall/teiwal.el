@@ -123,6 +123,27 @@ tei-hi[rend="bold"] {
   font-weight:bold;
 }
 
+/* app things */
+
+
+tei-app tei-note {
+  display: inline;
+}
+
+tei-app > tei-note {
+  display: block;
+}
+
+tei-app tei-lem {
+    display:block;
+}
+
+tei-app tei-rdg {
+    display:block;
+}
+
+
+
 /* navigation things */
 /* see https://www.thecssninja.com/css/css-tree-menu for the main idea */
 

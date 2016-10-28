@@ -37,7 +37,9 @@ var saritBehaviors =     {
 	},
 	"lg": ["", "<div class=\"verse-num\">[$@n]</div>"],
 	// Inserts the first array element before tei:add, and the second, after.
-	"add": ["`","´"],
+	"add": ["(+",")"],
+	"del": ["(-",")"],
+	"uncertain": ["(?", ")"],
 	"pb": function() {
 	    return function() {
 		console.log("PB matched: ", this);
@@ -119,39 +121,6 @@ var saritBehaviors =     {
 	    numDiv.className = "verse-num";
 	    numDiv.innerHTML = "[v. " + num + "]";
 	    elt.appendChild(numDiv);
-	},
-	"app": function (elt) {
-	    var from, to, id, appRef,anchor;
-	    console.log("Trying to fix app: ", elt);
-	    // stand off type apparatus entries
-	    if (elt.parentElement.localName == "tei-listapp") {
-		from = elt.getAttribute("from") || null;
-		console.log("Found app pointing to from: ", from);
-		if (from) {
-		    to = elt.getAttribute("to") || null;
-		    id = elt.getAttribute("id") || null;
-		    appRef = document.createElement("a");
-		    appRef.href = "#" + id;
-		    appRef.innerHTML = "app";
-		    console.log("Built app ref: ", appRef);
-		    if (to.match(/^#/)) {
-			console.log("Local pointer: ", to.split("#")[1]);
-			anchor = document.getElementById(to.split("#")[1]);
-		    } else {
-			anchor = document.getElementById(to);
-		    }
-		    console.log("Anchor is ", anchor);
-		    if (anchor) {
-			console.log("Anchoring to ", anchor);
-			if (anchor.innerHTML == "") {
-			    appRef.parentElement.insertBefore(appRef, anchor);
-			} else {
-			    anchor.insertBefore(appRef, anchor.childNodes[0]);
-			}
-		    }
-		}
-		
-	    }
 	}
     }
 };
@@ -161,10 +130,12 @@ var saritBehaviors =     {
 // global callback function
 var saritCallback = function (x) {
     console.log("saritCallback called!");
+    return true;
 };
 
 // per element callback function
 var saritPerElementFunc = function (x) {
+    return true;
     // switch (x.localName) {
     // case "tei-note":
     // 	// add an e element, but inside the note
@@ -196,6 +167,7 @@ var saritSetup = function (teidoc) {
 		   };
 		   root.appendChild(data);
 		   saritInsertNavList();
+		   saritAlignApps();
 	       }
 	       // ,
 	       // something to do with each element during
@@ -265,4 +237,45 @@ var saritInsertNavList = function () {
 	document.getElementById("nav").innerHTML = ol + "</li></ol>";
     }
 
+};
+
+
+
+var saritAlignApps =  function () {
+    var apps = document.getElementsByTagName("tei-app");
+    for (var j = 0, app; app = apps[j]; j++) {
+	var from, to, id, appRef,anchor;
+	console.log("Trying to fix app: ", app);
+	// stand off type apparatus entries
+	if (app.parentElement.localName == "tei-listapp") {
+	    from = app.getAttribute("from") || null;
+	    console.log("Found app pointing to from: ", from);
+	    if (from) {
+		to = app.getAttribute("to") || null;
+		id = app.getAttribute("id") || null;
+		appRef = document.createElement("a");
+		appRef.href = "#" + id;
+		appRef.innerHTML = "a";
+		appRef.className = "appRef";
+		console.log("Built app ref: ", appRef);
+		if (to.match(/^#/)) {
+		    console.log("Local pointer: ", to.split("#")[1]);
+		    anchor = document.getElementById(to.split("#")[1]);
+		} else {
+		    anchor = document.getElementById(to);
+		}
+		console.log("Anchor is ", anchor);
+		if (anchor) {
+		    console.log("Anchoring to ", anchor);
+		    // anchor could have content or not (anchor <--> lg, e.g.)
+		    if (anchor.innerHTML == "") {
+			anchor.parentElement.insertBefore(appRef, anchor);
+		    } else {
+			anchor.insertBefore(appRef, anchor.childNodes[0]);
+		    }
+		}
+	    }
+	    
+	}
+    }
 };

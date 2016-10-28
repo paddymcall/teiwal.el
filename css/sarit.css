@@ -15,7 +15,7 @@
 }
 
 /* make note so small as to show only first part */
-tei-note, tei-app {
+tei-note {
     display: inline-block;
     max-width: 1em;
     max-height: 1em;
@@ -23,7 +23,7 @@ tei-note, tei-app {
     font-size: 80%;
 }
 
-tei-note::before, tei-app::before {
+tei-note::before {
     content: "[n]";
     cursor: pointer;
     color: limegreen;
@@ -31,7 +31,7 @@ tei-note::before, tei-app::before {
     vertical-align: super;
 }
 
-tei-note:active::before, tei-app:active::before {
+tei-note:active::before {
     content: "[x]";
     cursor: pointer;
     color: red;
@@ -43,7 +43,7 @@ tei-note:active::before, tei-app:active::before {
 
 /* tei-note::before { content: "[n]";} */
 
-tei-note:active, tei-app:active {
+tei-note:active {
     display: block;
     background: antiquewhite;
     border-radius: 15px;
@@ -61,7 +61,7 @@ tei-note:active, tei-app:active {
     animation-duration: 0.5s;
 }
 
-/* don't break on lb */
+/* don't really break on lb */
 tei-lb {
     font-size: 50%;
     vertical-align: super;
@@ -125,6 +125,31 @@ tei-hi[rend="bold"] {
 
 /* app things */
 
+a.appRef {
+    font-size: 50%;
+    vertical-align: super;
+    color: lime;
+}
+
+tei-app {
+    border-radius: 15px;
+    display:block;
+    font-size: initial;
+    max-height: initial;
+    max-width: initial;
+    overflow: initial;
+    /* border: 1px solid black; */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    display: block;
+    margin-bottom: 1em;
+    margin-left: 2%;
+    margin-top: 1em;
+    max-width: 500px;
+    min-width: 20%;
+    padding: .5em 1.5em 1.5em 1.5em;
+    position: relative;
+    
+}
 
 tei-app tei-note {
   display: inline;

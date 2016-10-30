@@ -15,7 +15,7 @@
 }
 
 /* make note so small as to show only first part */
-tei-note {
+tei-note, tei-app {
     display: inline-block;
     max-width: 1em;
     max-height: 1em;
@@ -31,7 +31,16 @@ tei-note::before {
     vertical-align: super;
 }
 
-tei-note:active::before {
+tei-app::before {
+    content: "[a]";
+    cursor: pointer;
+    color: limegreen;
+    font-size: x-small;
+    vertical-align: super;
+}
+
+
+tei-note:active::before, tei-app:active::before {
     content: "[x]";
     cursor: pointer;
     color: red;
@@ -43,11 +52,11 @@ tei-note:active::before {
 
 /* tei-note::before { content: "[n]";} */
 
-tei-note:active {
+tei-note:active, tei-app:active {
     display: block;
     background: antiquewhite;
     border-radius: 15px;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     margin: auto;
     max-height: 100%;
     max-width: 100%;
@@ -66,6 +75,11 @@ tei-lb {
     font-size: 50%;
     vertical-align: super;
     color: gray;
+}
+
+tei-lb::after {
+  content: "";
+  white-space: normal;
 }
 
 tei-pb {
@@ -128,27 +142,7 @@ tei-hi[rend="bold"] {
 a.appRef {
     font-size: 50%;
     vertical-align: super;
-    color: lime;
-}
-
-tei-app {
-    border-radius: 15px;
-    display:block;
-    font-size: initial;
-    max-height: initial;
-    max-width: initial;
-    overflow: initial;
-    /* border: 1px solid black; */
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    display: block;
-    margin-bottom: 1em;
-    margin-left: 2%;
-    margin-top: 1em;
-    max-width: 500px;
-    min-width: 20%;
-    padding: .5em 1.5em 1.5em 1.5em;
-    position: relative;
-    
+    color: limegreen;
 }
 
 tei-app tei-note {
@@ -161,13 +155,13 @@ tei-app > tei-note {
 
 tei-app tei-lem {
     display:block;
+    font-weight: bold;
 }
 
 tei-app tei-rdg {
     display:block;
+    margin-left: 3em;
 }
-
-
 
 /* navigation things */
 /* see https://www.thecssninja.com/css/css-tree-menu for the main idea */
@@ -175,14 +169,15 @@ tei-app tei-rdg {
 nav {
     width: 20%;
     max-height: 60%;
-    float: right;
     display: inline;
-    margin-top: 3em;
+    top: 10px;
+    right: 2px;
     padding: .5em 1.5em 1.5em 1.5em;
-    margin-left: 10px;
-    position: fixed;
     overflow: auto;
     font-size: 100%;
+    position: fixed;
+    background: antiquewhite;
+    /* border: 3px solid green; */
 }
 
 nav a:link {
@@ -241,17 +236,29 @@ nav li input:checked + ol > li:last-child {
 }
 
 #TEI {
-     float: left;
-     width: 80%; /* of the standard body width */
-     margin-right: 24px;
-     margin-bottom: 24px;
-     padding: 24px;
+    width: 80%; /* of the standard body width */
+    margin-right: 24px;
+    margin-bottom: 24px;
+    margin-left: 10px;
+    padding: 24px;
+    /* border: 3px solid red; */
+    float: left;
 }
 
+#root {
+    /* border: 3px solid blue; */
+    overflow: auto;
+    width: 100%;
+}
 
+:lang(bo) {
+    font-family: "Noto Sans Tibetan", "Noto Sans", sans-serif; 
+}
 
 html {
   /* override font families */
   font-family: "Noto Sans Devanagari", "Noto Sans", sans-serif; 
 }
+
+
 

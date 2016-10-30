@@ -245,19 +245,20 @@ similar stuff."
 			  ()
 			  ,(format "%s (teiwal)" path)))
 		   (body () "\n    "
-			 (nav ((id . "nav")
-			       (class . "small"))
-			      ;; keep content here: avoids <nav/>, which is illegal.
-			      "ToC loading, ...")
-			 (div
-			  ((id . "TEI"))
-			  "\n      Trying to load file ... (This page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.)\n    ")
+			 (div ((id . "root")) 
+			  (nav ((id . "nav")
+				(class . "small"))
+			       ;; keep content here: avoids <nav/>, which is illegal.
+			       "ToC loading, ...")
+			  (div
+			   ((id . "TEI"))
+			   "\n      Trying to load file ... (This page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.)\n    "))
 			 "\n    "
 			 (script
 			  ((src . "/CETEIcean/dist/CETEI.js"))
 			  "\n// See http://teic.github.io/CETEIcean\n")
 			 (script
-			  ((src . "https://code.jquery.com/jquery-1.12.4.js"))
+			  ((src . "/js/jquery.js"))
 			  "\n // Jquery")
 			 (script
 			  ((src . "/js/sarit.js"))
@@ -265,7 +266,7 @@ similar stuff."
 			 (script ()
 				 ,(format
 				   (concat
-				    "$(document).ready(function(){"
+				    "jQuery(document).ready(function(){"
 				    "saritSetup('buffer/%s');"
 				    "});")
 				   (url-hexify-string path)))))))

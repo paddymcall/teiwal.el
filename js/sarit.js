@@ -40,9 +40,28 @@ var saritBehaviors =     {
 	"add": ["(+",")"],
 	"del": ["(-",")"],
 	"uncertain": ["(?", ")"],
+	"app": ["", "<div class=\"app-type\">[$@type]</div>"],
+	"rdg": // ["", " [<span class=\"wit\"><a href=\"$@wit\">$@wit</a></span>]"]
+	// works okay, but you'll need to add css directly in shadow tree
+	function () {
+	    return function () {
+		var shadow = this.createShadowRoot();
+		var wit = document.createElement("span");
+		// console.log("Rdg : ", this);
+		if (this.hasAttribute("wit")) {
+		    // console.log("Rdg with wit : ", this.getAttribute("wit"));
+		    var witlink = document.createElement("a");
+		    witlink.href = this.getAttribute("wit");
+		    witlink.innerHTML = this.getAttribute("wit").split("#").pop();
+		    wit.appendChild(witlink);
+		}
+		shadow.innerHTML = this.innerHTML;
+		shadow.appendChild(wit);
+	    };
+	},
 	"pb": function() {
 	    return function() {
-		console.log("PB matched: ", this);
+		// console.log("PB matched: ", this);
 		var shadow = this.createShadowRoot();
 		var span = document.createElement("span");
 		var ed = "[main]";
@@ -58,7 +77,7 @@ var saritBehaviors =     {
 		} 
 		span.innerHTML = ed + "/" + num;
 		shadow.appendChild(span);
-		shadow.appendChild(this);
+		// shadow.appendChild(this);
             };
 	}
     },
@@ -71,10 +90,6 @@ var saritBehaviors =     {
 	    elt.addEventListener("click", function(event) {
 		window.location = this.getAttribute("target");
 	    });
-	},
-	// Note that this would be better done with CSS. Included for completeness.
-	"term": function(elt) {
-	    elt.setAttribute("style", "font-weight: bold");
 	},
 	"pb": function(elt) {
 	    // console.log("PB matched: ", elt);
@@ -121,6 +136,20 @@ var saritBehaviors =     {
 	    numDiv.className = "verse-num";
 	    numDiv.innerHTML = "[v. " + num + "]";
 	    elt.appendChild(numDiv);
+	},
+	"rdg": 
+	function (elt) {
+	    var wit = document.createElement("span");
+	    // console.log("Rdg : ", elt);
+	    if (elt.hasAttribute("wit")) {
+		// console.log("Rdg with wit : ", this.getAttribute("wit"));
+		var witlink = document.createElement("a");
+		witlink.href = elt.getAttribute("wit");
+		witlink.innerHTML = elt.getAttribute("wit").split("#").pop() || "no wit";
+		wit.innerHTML = " ";
+		wit.appendChild(witlink);
+	    }
+	    elt.appendChild(wit);
 	}
     }
 };
@@ -168,6 +197,17 @@ var saritSetup = function (teidoc) {
 		   root.appendChild(data);
 		   saritInsertNavList();
 		   saritAlignApps();
+		   // // attempt to highlight lemmas in text
+		   // jQuery("tei-app").click( function (event) {
+		   //     console.log("An appref clicked: ", this);
+		   //     if (jQuery(this).attr("from") && jQuery(this).attr("from").match(/^#/)) {
+		   // 	   var from = jQuery(jQuery(this).attr("from"));
+		   // 	   // event.preventDefault();
+		   // 	   console.log("App starts at: ", from);
+		   // 	   from.innerHTML = "|->";
+		   // 	   from.toggle("highlight");
+		   //     } 
+		   // });
 	       }
 	       // ,
 	       // something to do with each element during
@@ -242,40 +282,37 @@ var saritInsertNavList = function () {
 
 
 var saritAlignApps =  function () {
-    var apps = document.getElementsByTagName("tei-app");
-    for (var j = 0, app; app = apps[j]; j++) {
-	var from, to, id, appRef,anchor;
-	console.log("Trying to fix app: ", app);
-	// stand off type apparatus entries
-	if (app.parentElement.localName == "tei-listapp") {
-	    from = app.getAttribute("from") || null;
-	    console.log("Found app pointing to from: ", from);
-	    if (from) {
-		to = app.getAttribute("to") || null;
-		id = app.getAttribute("id") || null;
-		appRef = document.createElement("a");
-		appRef.href = "#" + id;
-		appRef.innerHTML = "a";
-		appRef.className = "appRef";
-		console.log("Built app ref: ", appRef);
-		if (to.match(/^#/)) {
-		    console.log("Local pointer: ", to.split("#")[1]);
-		    anchor = document.getElementById(to.split("#")[1]);
-		} else {
-		    anchor = document.getElementById(to);
-		}
-		console.log("Anchor is ", anchor);
-		if (anchor) {
-		    console.log("Anchoring to ", anchor);
-		    // anchor could have content or not (anchor <--> lg, e.g.)
-		    if (anchor.innerHTML == "") {
-			anchor.parentElement.insertBefore(appRef, anchor);
-		    } else {
-			anchor.insertBefore(appRef, anchor.childNodes[0]);
+    jQuery("tei-app").each(
+	function () {
+	    var from, to, id, anchor;
+	    // console.log("Trying to fix app: ", jQuery(this));
+	    // stand off type apparatus entries
+	    if (jQuery(this).parent().prop('nodeName') == "TEI-LISTAPP") {
+		from = jQuery(this).attr("from") || null;
+		// console.log("Found app pointing to from: ", from);
+		if (from) {
+		    to = jQuery(this).attr("to") || null;
+		    id = jQuery(this).attr("id") || null;
+		    // console.log("Built app ref: ", appRef);
+		    if (to.match(/^#/)) {
+			// console.log("Local pointer: ", to.split("#")[1]);
+			anchor = jQuery(to);
+		    } 
+		    // console.log("Anchor is ", anchor);
+		    if (anchor) {
+			// console.log("Anchoring to ", anchor);
+			// anchor could have content or not (anchor <--> lg, e.g.)
+			if (anchor.innerHTML == "") {
+			    anchor.after(jQuery(this));
+			} else {
+			    anchor.before(jQuery(this));
+			}
 		    }
 		}
+		
 	    }
-	    
 	}
-    }
+    );
 };
+
+

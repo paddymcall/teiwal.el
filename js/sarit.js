@@ -204,8 +204,8 @@ var saritSetup = function (teidoc) {
 		   // 	   var from = jQuery(jQuery(this).attr("from"));
 		   // 	   // event.preventDefault();
 		   // 	   console.log("App starts at: ", from);
-		   // 	   from.innerHTML = "|->";
-		   // 	   from.toggle("highlight");
+		   // 	   console.log("Closest to from: ", from.nextAll(":text"));
+		   // 	   from.nextAll(":text").css("background-color", "green");
 		   //     } 
 		   // });
 	       }

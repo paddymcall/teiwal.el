@@ -409,10 +409,11 @@ Often exceeds max-depth, though.  Rewrite with xmltok."
        (cdr argv))
       (message (format "Opened %s" buffers-found))
       (message "Starting server ...")))
-    (teiwal/server-start)
-    (while teiwal/server-process
-      (message "Process okay, sleeping for a while")
-      (sleep-for 3600)))
+    (when buffers-found
+      (teiwal/server-start)
+      (while teiwal/server-process
+	(message "Process okay, sleeping for a while")
+	(sleep-for 3600))))
   (setq argv nil))
 
 (provide 'teiwal)

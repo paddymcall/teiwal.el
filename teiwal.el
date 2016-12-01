@@ -137,7 +137,7 @@
 (defun teiwal/server-start ()
   "Start a teiwal server."
   (interactive)
-  (message "Starting server http://%s:%s" teiwal/listen-address teiwal/listen-port)
+  (message "Starting server on http://%s:%s" teiwal/listen-address teiwal/listen-port)
   (setq teiwal/server-process
    (ws-start
     '(((:GET . ".*") . teiwal/serve-buffer))
@@ -407,13 +407,14 @@ Often exceeds max-depth, though.  Rewrite with xmltok."
 		    nil)
 		   buffers-found)))
        (cdr argv))
-      (message (format "Opened %s" buffers-found))
-      (message "Starting server ...")))
+      (message (format "Opened %s" buffers-found))))
     (when buffers-found
       (teiwal/server-start)
-      (while teiwal/server-process
-	(message "Process okay, sleeping for a while")
+      (while (member (process-status (oref teiwal/server-process process)) '(listen connect))
+	(message "Process %s okay, sleeping for a while (quit with Ctrl-c)"
+		 (oref teiwal/server-process process))
 	(sleep-for 3600))))
+  ;; avoid processing the commandline args normally
   (setq argv nil))
 
 (provide 'teiwal)

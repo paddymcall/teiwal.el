@@ -1,14 +1,50 @@
-;; wrapper around ceteicean
+#! /bin/sh
+":"; exec emacs --quick --script "$0" -- "$@" # -*-emacs-lisp-*-
+
+;;; teiwal.el --- Serve (TEI) XML buffers with ceteicean
+
+;; Copyright (C) 2016 Patrick McAllister
+
+;; Author: Patrick McAllister <pma@rdorte.org>
+;; Keywords: TEI, xml, server, ceteicean
+
+;; This file is not part of GNU Emacs.
+
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; This is a wrapper around ceteicean
+;; (http://teic.github.io/CETEIcean/,
+;; https://github.com/TEIC/CETEIcean) that lets you easily preview TEI
+;; XML files.  
+
+;; standard emacs stuff
+(require 'autorevert)
+(require 'files)
+
+;; extras
+
+;; https://github.com/eschulte/emacs-web-server
+(if (featurep 'web-server)
+    (require 'web-server)
+  (add-to-list 'load-path "emacs-web-server/")
+  (require 'web-server))
 
 
-;; main idea: take a buffer containing a TEI xml document, and serve
-;; it as an html document with ceteican.
-
-(require 'web-server);; https://github.com/eschulte/emacs-web-server
-;; caused trouble?: curl: (18) transfer closed with 1 bytes remaining to read
-;; ... on all pages
-
-;; (require 'simple-httpd);; https://github.com/skeeto/emacs-web-server
+(defvar teiwal/server-process nil
+  "Variable to store the server process in.")
 
 (defun teiwal/html-buffer-name (tei-buffer)
   "Return name of buffer that should contain the html for TEI-BUFFER."
@@ -101,27 +137,34 @@
 (defun teiwal/server-start ()
   "Start a teiwal server."
   (interactive)
-  (message "Starting server %s:%s" teiwal/listen-address teiwal/listen-port)
-  (ws-start
-   '(((:GET . ".*") . teiwal/serve-buffer))
-   teiwal/listen-port
-   ;; log buffer
-   (teiwal/log-buffer)
-   ;; NETWORK-ARGS --> passed to `make-network-process'
-   :host teiwal/listen-address))
+  (message "Starting server http://%s:%s" teiwal/listen-address teiwal/listen-port)
+  (setq teiwal/server-process
+   (ws-start
+    '(((:GET . ".*") . teiwal/serve-buffer))
+    teiwal/listen-port
+    ;; log buffer
+    (teiwal/log-buffer)
+    ;; NETWORK-ARGS --> passed to `make-network-process'
+    :host teiwal/listen-address)))
 
 
 (defun teiwal/server-stop ()
   "Stop all running servers."
   (interactive)
-  (ws-stop-all))
+  (setq teiwal/server-process (ws-stop teiwal/server-process))
+  (unless (null teiwal/server-process)
+    (error "Process still running: %s" teiwal/server-process)))
 
 (defun teiwal/get-nxml-buffers ()
   "Return a list of names of buffers in nxml-mode."
   (delq nil
 	(mapcar (lambda (x)
 		  (with-current-buffer x
-		    (when (eq major-mode 'nxml-mode)
+		    (when (or (eq major-mode 'nxml-mode)
+			      (string=
+			       "xml"
+			       (downcase
+				(format "%s" (file-name-extension (buffer-name x))))))
 		      (buffer-name x))))
 	   (buffer-list))))
 
@@ -346,3 +389,30 @@ Often exceeds max-depth, though.  Rewrite with xmltok."
 	  (delq nil (teiwal/div-to-list (cdr sxml)))))
    (t (error "Sorry, very unexpected"))))
 
+
+;;; what to do when called noninteractively
+(when noninteractive
+  (let (buffers-found)
+    (cond
+     ((>= 1 (length argv)) (message "Please specify filenames to serve"))
+     (t
+      (message (format "Opening %s" (cdr argv)))
+      (mapcar
+       (lambda (filename)
+	 (if (file-readable-p (expand-file-name filename))
+	     (push (find-file-noselect
+		    (expand-file-name filename)
+		    'nowarn
+		    'raw
+		    nil)
+		   buffers-found)))
+       (cdr argv))
+      (message (format "Opened %s" buffers-found))
+      (message "Starting server ...")))
+    (teiwal/server-start)
+    (while teiwal/server-process
+      (message "Process okay, sleeping for a while")
+      (sleep-for 3600)))
+  (setq argv nil))
+
+(provide 'teiwal)

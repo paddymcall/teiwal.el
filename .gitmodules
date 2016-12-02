@@ -1,6 +1,6 @@
 [submodule "CETEIcean"]
 	path = CETEIcean
-	url = https://github.com/TEIC/CETEIcean.git
+	url = https://github.com/paddymcall/CETEIcean.git
 [submodule "emacs-web-server"]
 	path = emacs-web-server
 	url = https://github.com/eschulte/emacs-web-server

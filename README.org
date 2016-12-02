@@ -1,6 +1,27 @@
 #+TITLE: Emacs wrapper around CETEIcean
 #+AUTHOR: Patrick McAllister
 
+
+teiwal.el provides some functions that allow Emacs to serve XML
+documents with [[https://github.com/TEIC/CETEIcean][CETEIcean]].
+
+* Quickstart
+
+You can run file:./teiwal.el directly from a shell, e.g.:
+
+#+BEGIN_SRC bash
+bash teiwal.el ~/path/to/TEI-doc.xml
+#+END_SRC
+
+That should result in a server being started on http://127.0.0.1:9004.
+
+
+* Use in emacs
+
+- M-x load-file teiwal.el
+- M-x teiwal/server-start
+- M-x teiwal/server-stop
+
 * Customizing CETEIcean
 
 From https://github.com/TEIC/CETEIcean/blob/master/README.md,
@@ -46,3 +67,11 @@ E.g., for notes:
 
 - Note: Standard css won't apply in a shadow dom!
 - https://developer.mozilla.org/en-US/docs/Web/Web_Components/Shadow_DOM
+
+
+* For docker
+
+#+BEGIN_SRC bash
+docker run -it debian:stable /bin/bash
+apt-get update && apt-get install -y git emacs24-nox
+#+END_SRC

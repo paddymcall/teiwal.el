@@ -1,0 +1,5 @@
+Shobhika font is from https://github.com/Sandhi-IITBombay/Shobhika,
+and published under the SIL Open Font License v1.1.  See
+file:./OFL.txt.
+
+Thank you!

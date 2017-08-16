@@ -327,8 +327,13 @@ similar stuff."
 	  (ws-send proc (buffer-string))))
        ;; possibly an internal link, check if file exists 
        ((string-match "^buffer/\\(.+\\)$" path)
-	(when (file-exists-p (expand-file-name (match-string 1 path)))
-	  (ws-send-file proc (expand-file-name (match-string 1 path)))))
+	(cond
+	 ((get-buffer (match-string 1 path))
+	  (ws-send proc (with-current-buffer (get-buffer (match-string 1 path))
+			  (buffer-string))))
+	 ((file-exists-p (expand-file-name (match-string 1 path)))
+	  (ws-send-file proc (expand-file-name (match-string 1 path))))
+	 (t (ws-response-header proc 404  '("Content-type" . "text/plain")))))
        ((file-exists-p (expand-file-name path "/home/beta/webstuff/emacs-things/teiwal/"))
 	(ws-send-file proc (expand-file-name path "/home/beta/webstuff/emacs-things/teiwal/")))
        (t

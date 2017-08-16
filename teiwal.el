@@ -166,8 +166,17 @@
 			       (downcase
 				(format "%s" (file-name-extension (buffer-name x))))))
 		      (buffer-name x))))
-	   (buffer-list))))
+		(buffer-list))))
 
+(defun teiwal/get-nxml-buffers-filenames ()
+  "Return a list of filenames for buffers in nxml-mode."
+  (delq nil
+	(mapcar
+	 (lambda (buf) (when (and (get-buffer buf)
+				  (buffer-file-name (get-buffer buf)))
+			 (with-current-buffer (get-buffer buf)
+			   (expand-file-name (buffer-file-name (current-buffer))))))
+	 (teiwal/get-nxml-buffers))))
 
 (defun teiwal/sxml-to-string (sxml)
   "Convert SXML to string.
@@ -316,13 +325,10 @@ similar stuff."
 	  (ws-response-header proc 200
 			      (cons "Content-type" "text/html"))
 	  (ws-send proc (buffer-string))))
-       ((and
-	 (string-match "^buffer/\\(.+\\)$" path)
-	 (member (match-string 1 path) (teiwal/get-nxml-buffers)))
-	(with-current-buffer (get-buffer (match-string 1 path))
-	  (ws-response-header proc 200
-			      (cons "Content-type" "application/xml"))
-	  (ws-send proc (buffer-string))))
+       ;; possibly an internal link, check if file exists 
+       ((string-match "^buffer/\\(.+\\)$" path)
+	(when (file-exists-p (expand-file-name (match-string 1 path)))
+	  (ws-send-file proc (expand-file-name (match-string 1 path)))))
        ((file-exists-p (expand-file-name path "/home/beta/webstuff/emacs-things/teiwal/"))
 	(ws-send-file proc (expand-file-name path "/home/beta/webstuff/emacs-things/teiwal/")))
        (t

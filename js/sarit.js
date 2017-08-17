@@ -18,7 +18,6 @@ var saritBehaviors =     {
     "handlers" : {
 	// Overrides the default ptr behavior, displaying a short link
 	"ptr": function(elt) {
-		var shadow = elt.createShadowRoot();
 		var link = document.createElement("a");
 		link.innerHTML = elt.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
 		link.href = elt.getAttribute("target");
@@ -26,7 +25,6 @@ var saritBehaviors =     {
 	},
 	// Adds a new handler for <term>, wrapping it in an HTML <b>
 	"term": function(elt) {
-		var shadow = elt.createShadowRoot();
 		var b = document.createElement("b");
 		b.innerHTML = elt.innerHTML;
 		return elt.appendChild(b);

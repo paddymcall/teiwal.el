@@ -39,13 +39,25 @@ var saritBehaviors =     {
 	// works okay, but you'll need to add css directly in shadow tree
 	function (elt) {
 		var wit = document.createElement("span");
+		var witnesses = elt.getAttribute("wit").split(/\s+/);
+		// console.log("Witnesses : ", witnesses);
+		elt.innerHTML = "«" + elt.innerHTML + "» ";
 		// console.log("Rdg : ", elt);
 		if (elt.hasAttribute("wit")) {
-		    // console.log("Rdg with wit : ", elt.getAttribute("wit"));
-		    var witlink = document.createElement("a");
-		    witlink.href = elt.getAttribute("wit");
-		    witlink.innerHTML = elt.getAttribute("wit").split("#").pop();
-		    wit.appendChild(witlink);
+			// console.log("Rdg with wit : ", elt.getAttribute("wit"));
+			for (var i = 0; i < witnesses.length; i++)
+			{
+				var witlink = document.createElement("a");
+				witlink.href = elt.getAttribute("wit");
+				witlink.innerHTML = witnesses[i].split("#").pop();
+				if (i < (witnesses.length - 1)) {
+					witlink.innerHTML = witlink.innerHTML + "; ";
+				}
+				wit.appendChild(witlink);
+			}
+		}
+		if (elt.hasAttribute("cause")) {
+			wit.innerHTML = wit.innerHTML + " <span class=\"rdg-cause\">(" + elt.getAttribute("cause") + ")</span>";
 		}
 		return elt.appendChild(wit);
 	},

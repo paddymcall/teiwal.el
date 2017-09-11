@@ -274,10 +274,4 @@ nav li input:checked + ol > li:last-child {
     font-family: "Noto Sans Tibetan", "Noto Sans", sans-serif; 
 }
 
-html {
-  /* override font families */
-  font-family: "Noto Sans Devanagari", "Noto Sans", sans-serif; 
-}
-
-
 

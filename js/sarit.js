@@ -17,23 +17,17 @@ var lgCount = 0;
 var saritBehaviors =     {
     "handlers" : {
 	// Overrides the default ptr behavior, displaying a short link
-	"ptr": function() {
-            return function() {
-		var shadow = this.createShadowRoot();
+	"ptr": function(elt) {
 		var link = document.createElement("a");
-		link.innerHTML = this.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
-		link.href = this.getAttribute("target");
-		shadow.appendChild(link);
-            };
+		link.innerHTML = elt.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
+		link.href = elt.getAttribute("target");
+		return elt.appendChild(link);
 	},
 	// Adds a new handler for <term>, wrapping it in an HTML <b>
-	"term": function() {
-            return function() {
-		var shadow = this.createShadowRoot();
+	"term": function(elt) {
 		var b = document.createElement("b");
-		b.innerHTML = this.innerHTML;
-		shadow.appendChild(b);
-            };
+		b.innerHTML = elt.innerHTML;
+		return elt.appendChild(b);
 	},
 	"lg": ["", "<div class=\"verse-num\">[$@n]</div>"],
 	// Inserts the first array element before tei:add, and the second, after.
@@ -43,115 +37,119 @@ var saritBehaviors =     {
 	"app": ["", "<div class=\"app-type\">[$@type]</div>"],
 	"rdg": // ["", " [<span class=\"wit\"><a href=\"$@wit\">$@wit</a></span>]"]
 	// works okay, but you'll need to add css directly in shadow tree
-	function () {
-	    return function () {
-		var shadow = this.createShadowRoot();
+	function (elt) {
 		var wit = document.createElement("span");
-		// console.log("Rdg : ", this);
-		if (this.hasAttribute("wit")) {
-		    // console.log("Rdg with wit : ", this.getAttribute("wit"));
-		    var witlink = document.createElement("a");
-		    witlink.href = this.getAttribute("wit");
-		    witlink.innerHTML = this.getAttribute("wit").split("#").pop();
-		    wit.appendChild(witlink);
+		var witnesses = elt.getAttribute("wit").split(/\s+/);
+		// console.log("Witnesses : ", witnesses);
+		elt.innerHTML = "«" + elt.innerHTML + "» ";
+		// console.log("Rdg : ", elt);
+		if (elt.hasAttribute("wit")) {
+			// console.log("Rdg with wit : ", elt.getAttribute("wit"));
+			for (var i = 0; i < witnesses.length; i++)
+			{
+				var witlink = document.createElement("a");
+				witlink.href = elt.getAttribute("wit");
+				witlink.innerHTML = witnesses[i].split("#").pop();
+				if (i < (witnesses.length - 1)) {
+					witlink.innerHTML = witlink.innerHTML + "; ";
+				}
+				wit.appendChild(witlink);
+			}
 		}
-		shadow.innerHTML = this.innerHTML;
-		shadow.appendChild(wit);
-	    };
+		if (elt.hasAttribute("cause")) {
+			wit.innerHTML = wit.innerHTML + " <span class=\"rdg-cause\">(" + elt.getAttribute("cause") + ")</span>";
+		}
+		return elt.appendChild(wit);
 	},
-	"pb": function() {
-	    return function() {
-		// console.log("PB matched: ", this);
-		var shadow = this.createShadowRoot();
+	"pb": function(elt) {
+		// console.log("PB matched: ", elt);
 		var span = document.createElement("span");
 		var ed = "[main]";
 		var num = "pb";
 		span.className = "pb";
-		if (this.hasAttribute("edRef")) {
-		    ed = this.getAttribute("edRef");
-		} else if (this.hasAttribute("ed")) {
-		    ed = this.getAttribute("ed");
+		if (elt.hasAttribute("edRef")) {
+		    ed = elt.getAttribute("edRef");
+		} else if (elt.hasAttribute("ed")) {
+		    ed = elt.getAttribute("ed");
 		}
-		if (this.hasAttribute("n")) {
-		    num = "p. " + this.getAttribute("n");
+		if (elt.hasAttribute("n")) {
+		    num = "p. " + elt.getAttribute("n");
 		} 
 		span.innerHTML = ed + "/" + num;
-		shadow.appendChild(span);
-		// shadow.appendChild(this);
-            };
+		return elt.appendChild(span);
 	}
-    },
-    "fallbacks" : {
-	"ptr": function(elt) {
-	    var content = document.createElement("a");
-	    content.setAttribute("href", elt.getAttribute("target"));
-	    content.innerHTML = elt.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
-	    elt.appendChild(content);
-	    elt.addEventListener("click", function(event) {
-		window.location = this.getAttribute("target");
-	    });
-	},
-	"pb": function(elt) {
-	    // console.log("PB matched: ", elt);
-	    var span = document.createElement("span");
-	    var ed = "main";
-	    var num = "pb";
-	    span.className = "pb";
-	    if (elt.hasAttribute("edRef")) {
-		ed = elt.getAttribute("edRef");
-	    } else if (elt.hasAttribute("ed")) {
-		ed = elt.getAttribute("ed");
-	    }
-	    if (elt.hasAttribute("n")) {
-		num = elt.getAttribute("n");
-	    } 
-	    span.innerHTML = ed + "/" + num;
-	    elt.appendChild(span);
-	},
-	"lb": function (elt) {
-	    var span = document.createElement("span");
-	    var ed = "main";
-	    var num = "lb";
-	    span.className = "lb";
-	    if (elt.hasAttribute("edRef")) {
-		ed = elt.getAttribute("edRef");
-	    } else if (elt.hasAttribute("ed")) {
-		ed = elt.getAttribute("ed");
-	    }
-	    if (elt.hasAttribute("n")) {
-		num = elt.getAttribute("n");
-	    } 
-	    span.innerHTML = ed + "/" + num;
-	    // to insert before: elt.parentElement.insertBefore(span, elt);
-	    elt.appendChild(span);
-	},
-	"lg": function (elt) {
-	    var num = (function () { lgCount = lgCount + 1; return lgCount;})();
-	    if (elt.hasAttribute("n")) {
-		num = elt.getAttribute("n");
-	    } else {
-		num = lgCount + " (running number)";
-	    }
-	    var numDiv = document.createElement("div");
-	    numDiv.className = "verse-num";
-	    numDiv.innerHTML = "[v. " + num + "]";
-	    elt.appendChild(numDiv);
-	},
-	"rdg": 
-	function (elt) {
-	    var wit = document.createElement("span");
-	    // console.log("Rdg : ", elt);
-	    if (elt.hasAttribute("wit")) {
-		// console.log("Rdg with wit : ", this.getAttribute("wit"));
-		var witlink = document.createElement("a");
-		witlink.href = elt.getAttribute("wit");
-		witlink.innerHTML = elt.getAttribute("wit").split("#").pop() || "no wit";
-		wit.innerHTML = " ";
-		wit.appendChild(witlink);
-	    }
-	    elt.appendChild(wit);
-	}
-    }
+    }// ,
+    // "fallbacks" : {
+    // 	"ptr": function(elt) {
+    // 	    var content = document.createElement("a");
+    // 	    content.setAttribute("href", elt.getAttribute("target"));
+    // 	    content.innerHTML = elt.getAttribute("target").replace(/https?:\/\/([^\/]+)\/.*/, "$1");
+    // 	    elt.appendChild(content);
+    // 	    elt.addEventListener("click", function(event) {
+    // 		window.location = this.getAttribute("target");
+    // 	    });
+    // 	},
+    // 	"pb": function(elt) {
+    // 	    // console.log("PB matched: ", elt);
+    // 	    var span = document.createElement("span");
+    // 	    var ed = "main";
+    // 	    var num = "pb";
+    // 	    span.className = "pb";
+    // 	    if (elt.hasAttribute("edRef")) {
+    // 		ed = elt.getAttribute("edRef");
+    // 	    } else if (elt.hasAttribute("ed")) {
+    // 		ed = elt.getAttribute("ed");
+    // 	    }
+    // 	    if (elt.hasAttribute("n")) {
+    // 		num = elt.getAttribute("n");
+    // 	    } 
+    // 	    span.innerHTML = ed + "/" + num;
+    // 	    elt.appendChild(span);
+    // 	},
+    // 	"lb": function (elt) {
+    // 	    var span = document.createElement("span");
+    // 	    var ed = "main";
+    // 	    var num = "lb";
+    // 	    span.className = "lb";
+    // 	    if (elt.hasAttribute("edRef")) {
+    // 		ed = elt.getAttribute("edRef");
+    // 	    } else if (elt.hasAttribute("ed")) {
+    // 		ed = elt.getAttribute("ed");
+    // 	    }
+    // 	    if (elt.hasAttribute("n")) {
+    // 		num = elt.getAttribute("n");
+    // 	    } 
+    // 	    span.innerHTML = ed + "/" + num;
+    // 	    // to insert before: elt.parentElement.insertBefore(span, elt);
+    // 	    elt.appendChild(span);
+    // 	},
+    // 	"lg": function (elt) {
+    // 	    var num = (function () { lgCount = lgCount + 1; return lgCount;})();
+    // 	    if (elt.hasAttribute("n")) {
+    // 		num = elt.getAttribute("n");
+    // 	    } else {
+    // 		num = lgCount + " (running number)";
+    // 	    }
+    // 	    var numDiv = document.createElement("div");
+    // 	    numDiv.className = "verse-num";
+    // 	    numDiv.innerHTML = "[v. " + num + "]";
+    // 	    elt.appendChild(numDiv);
+    // 	},
+    // 	"rdg": 
+    // 	function (elt) {
+    // 	    var wit = document.createElement("span");
+    // 	    // console.log("Rdg : ", elt);
+    // 	    if (elt.hasAttribute("wit")) {
+    // 		// console.log("Rdg with wit : ", this.getAttribute("wit"));
+    // 		var witlink = document.createElement("a");
+    // 		witlink.href = elt.getAttribute("wit");
+    // 		witlink.innerHTML = elt.getAttribute("wit").split("#").pop() || "no wit";
+    // 		wit.innerHTML = " ";
+    // 		wit.appendChild(witlink);
+    // 	    }
+    // 	    elt.appendChild(wit);
+    // 	}
+    // }
 };
 
 

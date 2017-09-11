@@ -60,7 +60,7 @@ a img {border: 0;}
 }
 
 body {
-	font: 17px/24px "Noto Sans Devanagari", "Noto Sans", sans-serif; 
+	font: 17px/24px devnagFont, "FreeSerif", serif; 
 }
 
 .small, small {

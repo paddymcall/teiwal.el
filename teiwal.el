@@ -134,18 +134,22 @@
   "Return log buffer for this."
   (get-buffer-create teiwal/log-buffer-name))
 
-(defun teiwal/server-start ()
+;;;###autoload
+(defun teiwal/server-start (&optional interactive)
   "Start a teiwal server."
-  (interactive)
+  (interactive '(t))
   (message "Starting server on http://%s:%s" teiwal/listen-address teiwal/listen-port)
   (setq teiwal/server-process
-   (ws-start
-    '(((:GET . ".*") . teiwal/serve-buffer))
-    teiwal/listen-port
-    ;; log buffer
-    (teiwal/log-buffer)
-    ;; NETWORK-ARGS --> passed to `make-network-process'
-    :host teiwal/listen-address)))
+	(ws-start
+	 '(((:GET . ".*") . teiwal/serve-buffer))
+	 teiwal/listen-port
+	 ;; log buffer
+	 (teiwal/log-buffer)
+	 ;; NETWORK-ARGS --> passed to `make-network-process'
+	 :host teiwal/listen-address))
+  (when interactive
+    (browse-url (format "%s:%s" teiwal/listen-address teiwal/listen-port)))
+  teiwal/server-process)
 
 
 (defun teiwal/server-stop ()
@@ -331,7 +335,6 @@ similar stuff."
 			  (insert (format "Not found: %s" (pp request (current-buffer))))))
 	(ws-response-header proc 404  '("Content-type" . "text/plain"))
 	(process-send-string proc "Ahem, not found?"))))))
-
 
 (defun teiwal/template-send-file (proc path &optional mime-type template-vars)
   "Send PATH to PROC.

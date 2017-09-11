@@ -39,11 +39,11 @@ var saritBehaviors =     {
 	// works okay, but you'll need to add css directly in shadow tree
 	function (elt) {
 		var wit = document.createElement("span");
-		var witnesses = elt.getAttribute("wit").split(/\s+/);
-		// console.log("Witnesses : ", witnesses);
 		elt.innerHTML = "«" + elt.innerHTML + "» ";
 		// console.log("Rdg : ", elt);
 		if (elt.hasAttribute("wit")) {
+			// console.log("Witnesses : ", witnesses);
+			var witnesses = elt.getAttribute("wit").split(/\s+/);
 			// console.log("Rdg with wit : ", elt.getAttribute("wit"));
 			for (var i = 0; i < witnesses.length; i++)
 			{

@@ -84,10 +84,14 @@
 		      (script
 		       ((src . "https://github.com/TEIC/CETEIcean/releases/download/v0.3.2/CETEI.js")))
 		      (script nil "\n      var CETEIcean = new CETEI();\n      CETEIcean.getHTML5('testTEI.xml', function(data) {\n        document.getElementById(\"TEI\").innerHTML = \"\";\n        document.getElementById(\"TEI\").appendChild(data);\n        CETEIcean.addStyle(document, data);\n      });\n\n      // Alternatively, use then()\n      // (new CETEI).getHTML5('testTEI.xml').then(function(data){\n      //   document.getElementById(\"TEI\").appendChild(data);\n      // });\n\n    "))))))
-      (insert-buffer-substring tei-doc (point-min) (point-max))
-      )
-    )
-  )
+      ;; the actual content
+      (let  ((narrowed? (with-current-buffer tei-doc
+		      (buffer-narrowed-p))))
+	(when narrowed?
+	  (insert "<TEI xmlns=\"http://www.tei-c.org/ns/1.0\" xml:id=\"temp\">"))
+	(insert-buffer-substring tei-doc (point-min) (point-max))
+	(when narrowed?
+	  (insert "</TEI>"))))))
 
 
 ;; from http://teic.github.io/CETEIcean/simpleTest.html:
@@ -302,13 +306,13 @@ similar stuff."
 			  ,(format "%s (teiwal)" path)))
 		   (body () "\n    "
 			 (div ((id . "root")) 
-			  (nav ((id . "nav")
-				(class . "small"))
-			       ;; keep content here: avoids <nav/>, which is illegal.
-			       "ToC loading, ...")
-			  (div
-			   ((id . "TEI"))
-			   "\n      Trying to load file ... (This page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.)\n    "))
+			      (nav ((id . "nav")
+				    (class . "small"))
+				   ;; keep content here: avoids <nav/>, which is illegal.
+				   "ToC loading, ...")
+			      (div
+			       ((id . "TEI"))
+			       "\n      Trying to load file ... (This page will not work in Internet Explorer and some older browsers. We suggest you use a newer version of Chrome or Firefox.)\n    "))
 			 "\n    "
 			 (script
 			  ((src . "/CETEIcean/dist/CETEI.js"))
@@ -333,8 +337,15 @@ similar stuff."
        ((string-match "^buffer/\\(.+\\)$" path)
 	(cond
 	 ((get-buffer (match-string 1 path))
-	  (ws-send proc (with-current-buffer (get-buffer (match-string 1 path))
-			  (buffer-string))))
+	  (ws-send proc
+		   (with-current-buffer (get-buffer (match-string 1 path))
+		     (let  ((narrowed? (buffer-narrowed-p)))
+		       (if narrowed?
+			   (concat
+			    "<TEI xmlns=\"http://www.tei-c.org/ns/1.0\" xml:id=\"temp\">\n"
+			    (buffer-string)
+			    "</TEI>")
+			 (buffer-string))))))
 	 ((file-exists-p (expand-file-name (match-string 1 path)))
 	  (ws-send-file proc (expand-file-name (match-string 1 path))))
 	 (t (ws-response-header proc 404  '("Content-type" . "text/plain")))))

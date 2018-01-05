@@ -1667,7 +1667,8 @@ tei-border-radius: 15px;
 tei-border: 1px solid black;
 tei-background:white;
 tei-*/
-  line-height: 1.5;
+  line-height: 1.8;
+  font-size: x-large;
 }
 tei-textClass {
   display: none;
